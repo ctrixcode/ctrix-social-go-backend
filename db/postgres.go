@@ -1,81 +1,71 @@
 package db
 
-import (
-	"fmt"
-	"log"
-	"os"
+// var dbInstance *gorm.DB
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
-)
+func DBConnection() {
+	// if dbInstance != nil {
+	// 	return dbInstance, nil
+	// }
 
-var dbInstance *gorm.DB
+	// var host, username, password, dbname string = "", "", "", ""
 
-func DBConnection() (*gorm.DB, error) {
-	if dbInstance != nil {
-		return dbInstance, nil
-	}
+	// currentEnv := os.Getenv("APP_ENV")
+	// if currentEnv == "dev" {
+	// 	host = os.Getenv("postgresHostDev")
+	// 	dbname = os.Getenv("postgresDBDev")
+	// 	username = os.Getenv("postgresUsernameDev")
+	// 	password = os.Getenv("postgresPasswordDev")
+	// }
 
-	var host, username, password, dbname string = "", "", "", ""
+	// if currentEnv == "production" {
+	// 	host = os.Getenv("postgresHostProd")
+	// 	dbname = os.Getenv("postgresDBProd")
+	// 	username = os.Getenv("postgresUsernameProd")
+	// 	password = os.Getenv("postgresPasswordProd")
+	// }
 
-	currentEnv := os.Getenv("APP_ENV")
-	if currentEnv == "dev" {
-		host = os.Getenv("postgresHostDev")
-		dbname = os.Getenv("postgresDBDev")
-		username = os.Getenv("postgresUsernameDev")
-		password = os.Getenv("postgresPasswordDev")
-	}
-
-	if currentEnv == "production" {
-		host = os.Getenv("postgresHostProd")
-		dbname = os.Getenv("postgresDBProd")
-		username = os.Getenv("postgresUsernameProd")
-		password = os.Getenv("postgresPasswordProd")
-	}
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, username, password, dbname)
+	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, username, password, dbname)
 	//Open the connection
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		TranslateError: true,
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-		},
-	})
+	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	// 	TranslateError: true,
+	// 	NamingStrategy: schema.NamingStrategy{
+	// 		SingularTable: true,
+	// 	},
+	// })
 
-	if err != nil {
-		return nil, err
-	}
-	dbInstance = db
-	return dbInstance, nil
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// dbInstance = db
+	// return dbInstance, nil
 }
 
 func CreateInitialDBStructure() {
 
-	db, err := DBConnection()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// db, err := DBConnection()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	sqlFile, err := os.ReadFile("./sql/createTables.sql")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.Exec(string(sqlFile)).Error
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Initial Tables are Created Successfully!!!")
-	}
+	// sqlFile, err := os.ReadFile("./sql/createTables.sql")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// err = db.Exec(string(sqlFile)).Error
+	// if err != nil {
+	// 	fmt.Println(err)
+	// } else {
+	// 	fmt.Println("Initial Tables are Created Successfully!!!")
+	// }
 
 }
 func ResetDB() {
-	db, err := DBConnection()
-	if err != nil {
-		fmt.Println("error here!1")
-		log.Fatal("Error connecting to db: ", err)
-	}
+	// db, err := DBConnection()
+	// if err != nil {
+	// 	fmt.Println("error here!1")
+	// 	log.Fatal("Error connecting to db: ", err)
+	// }
 	// if err := db.Exec("DROP DATABASE Ctrix_Social_DB"); err != nil {
 	// 	fmt.Println("error here!2")
 
@@ -87,15 +77,15 @@ func ResetDB() {
 	// 	log.Fatal(err)
 	// }
 
-	sqlFile, err := os.ReadFile("./sql/resetDB.sql")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.Exec(string(sqlFile)).Error
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("DB Resetted Successfully!!!")
-	}
+	// sqlFile, err := os.ReadFile("./sql/resetDB.sql")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// err = db.Exec(string(sqlFile)).Error
+	// if err != nil {
+	// 	fmt.Println(err)
+	// } else {
+	// 	fmt.Println("DB Resetted Successfully!!!")
+	// }
 
 }

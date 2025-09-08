@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 	"os"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/logger"
-	recoverer "github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
-	"github.com/mcctrix/ctrix-social-go-backend/db"
 	"github.com/mcctrix/ctrix-social-go-backend/utils"
 )
 
 func main() {
+
+	mainRouter := chi.NewRouter()
 
 	loadEnvironment()
 
@@ -21,16 +20,8 @@ func main() {
 	if port == "" {
 		port = "4000"
 	}
-	mainRouter := makeRouter()
 
-	mainRouter.Get("/", func(c fiber.Ctx) error {
-		return c.SendString("This is backend of Ctrix Social App!")
-	})
-
-	err := mainRouter.Listen(":" + port)
-	if err != nil {
-		fmt.Println(err)
-	}
+	http.ListenAndServe(":"+port, mainRouter)
 }
 
 func loadEnvironment() {
@@ -43,22 +34,5 @@ func loadEnvironment() {
 		utils.GenerateEcdsaPrivateKey()
 	}
 	// db.ResetDB()
-	db.CreateInitialDBStructure()
-}
-
-func makeRouter() *fiber.App {
-	router := fiber.New(fiber.Config{
-		TrustProxy: true,
-		TrustProxyConfig: fiber.TrustProxyConfig{
-			Proxies:  []string{"127.0.0.1", "0.0.0.0"},
-			Loopback: true,
-		},
-	})
-	router.Use(recoverer.New())
-
-	router.Use(logger.New(logger.Config{
-		Format: "[${ip}]: ${port} ${status} - ${method} ${path}\n",
-	}))
-
-	return router
+	// db.CreateInitialDBStructure()
 }

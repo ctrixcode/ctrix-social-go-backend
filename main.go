@@ -1,17 +1,15 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"github.com/mcctrix/ctrix-social-go-backend/utils"
 )
 
 func main() {
 
-	mainRouter := chi.NewRouter()
+	// mainRouter := chi.NewRouter()
 
 	loadEnvironment()
 
@@ -21,7 +19,7 @@ func main() {
 		port = "4000"
 	}
 
-	http.ListenAndServe(":"+port, mainRouter)
+	// http.ListenAndServe(":"+port, mainRouter)
 }
 
 func loadEnvironment() {

@@ -1,44 +1,27 @@
 package db
 
-// var dbInstance *gorm.DB
+import (
+	"database/sql"
+	"fmt"
+	"os"
 
-func DBConnection() {
-	// if dbInstance != nil {
-	// 	return dbInstance, nil
-	// }
+	_ "github.com/lib/pq"
+)
 
-	// var host, username, password, dbname string = "", "", "", ""
+var dbInstance *sql.DB
 
-	// currentEnv := os.Getenv("APP_ENV")
-	// if currentEnv == "dev" {
-	// 	host = os.Getenv("postgresHostDev")
-	// 	dbname = os.Getenv("postgresDBDev")
-	// 	username = os.Getenv("postgresUsernameDev")
-	// 	password = os.Getenv("postgresPasswordDev")
-	// }
-
-	// if currentEnv == "production" {
-	// 	host = os.Getenv("postgresHostProd")
-	// 	dbname = os.Getenv("postgresDBProd")
-	// 	username = os.Getenv("postgresUsernameProd")
-	// 	password = os.Getenv("postgresPasswordProd")
-	// }
-
-	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", host, username, password, dbname)
-	//Open the connection
-
-	// db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-	// 	TranslateError: true,
-	// 	NamingStrategy: schema.NamingStrategy{
-	// 		SingularTable: true,
-	// 	},
-	// })
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// dbInstance = db
-	// return dbInstance, nil
+func DBConnection() *sql.DB {
+	if dbInstance != nil {
+		return dbInstance
+	}
+	dbConfig := getDBConfig()
+	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port, dbConfig.dbname)
+	db, err := sql.Open("postgres", connString)
+	if err != nil {
+		panic(err)
+	}
+	dbInstance = db
+	return dbInstance
 }
 
 func CreateInitialDBStructure() {
@@ -88,4 +71,23 @@ func ResetDB() {
 	// 	fmt.Println("DB Resetted Successfully!!!")
 	// }
 
+}
+
+type dbConfig struct {
+	host     string
+	username string
+	password string
+	dbname   string
+	port     string
+}
+
+func getDBConfig() *dbConfig {
+
+	return &dbConfig{
+		host:     os.Getenv("POSTGRES_HOST"),
+		username: os.Getenv("POSTGRES_USERNAME"),
+		password: os.Getenv("POSTGRES_PASSWORD"),
+		dbname:   os.Getenv("POSTGRES_DBNAME"),
+		port:     os.Getenv("POSTGRES_PORT"),
+	}
 }

@@ -14,18 +14,18 @@ import (
 	"github.com/mcctrix/ctrix-social-go-backend/models"
 )
 
-type gnData struct {
+type jwtTokenData struct {
 	Token       *jwt.Token
 	Exp_Time    int64
 	StringToken string
 }
 
 /*This Function takes User model and return a raw jwt token in string format*/
-func GenerateJwtToken(user *models.User_Auth) (*gnData, error) {
+func GenerateJwtToken(user *models.User_Auth) (*jwtTokenData, error) {
 
-	returnData := &gnData{}
+	returnData := &jwtTokenData{}
 
-	returnData.Exp_Time = time.Now().Add(time.Hour * 24).Unix()
+	returnData.Exp_Time = time.Now().Add(time.Hour * 24 * 365).Unix()
 
 	claim := jwt.MapClaims{
 		"iss":   "ctrix-social-golang-backend",
@@ -122,11 +122,4 @@ func GetClaimData(token *jwt.Token, claimName string) string {
 		return claim[claimName].(string)
 	}
 	return ""
-}
-func GetUserIDWithToken(token string) (string, error) {
-	jwtToken, err := GetJwtToken(token)
-	if err != nil {
-		return "", err
-	}
-	return GetClaimData(jwtToken, "aud"), nil
 }

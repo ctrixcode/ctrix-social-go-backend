@@ -11,7 +11,6 @@ import (
 	recoverer "github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/joho/godotenv"
 	"github.com/mcctrix/ctrix-social-go-backend/db"
-	"github.com/mcctrix/ctrix-social-go-backend/routes"
 	"github.com/mcctrix/ctrix-social-go-backend/utils"
 )
 
@@ -29,10 +28,6 @@ func main() {
 	mainRouter.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("This is backend of Ctrix Social App!")
 	})
-
-	routes.AuthRouter(mainRouter.Group("/api/auth"))
-	routes.UserManagementRouter(mainRouter.Group("/api/user"))
-	routes.PostManagementRouter(mainRouter.Group("/api/post"))
 
 	err := mainRouter.Listen(":" + port)
 	if err != nil {

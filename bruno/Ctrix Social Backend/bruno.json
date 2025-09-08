@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Ctrix Social Backend",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

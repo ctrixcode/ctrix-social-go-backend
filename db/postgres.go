@@ -20,6 +20,14 @@ func DBConnection() *sql.DB {
 	if err != nil {
 		panic(err)
 	}
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println("DB Connection Established Successfully!!!")
+	}
+
 	dbInstance = db
 	return dbInstance
 }
@@ -87,7 +95,7 @@ func getDBConfig() *dbConfig {
 		host:     os.Getenv("POSTGRES_HOST"),
 		username: os.Getenv("POSTGRES_USERNAME"),
 		password: os.Getenv("POSTGRES_PASSWORD"),
-		dbname:   os.Getenv("POSTGRES_DBNAME"),
+		dbname:   os.Getenv("POSTGRES_DB"),
 		port:     os.Getenv("POSTGRES_PORT"),
 	}
 }

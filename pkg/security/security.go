@@ -10,15 +10,23 @@ import (
 	"os"
 )
 
+var ecdsaPrivateKey *ecdsa.PrivateKey
+
 /* This function loads pem file and Decode it to parse the Ecdsa.PrivateKey */
 func GetEcdsaPrivateKey() *ecdsa.PrivateKey {
+
+	if ecdsaPrivateKey != nil {
+		return ecdsaPrivateKey
+	}
 
 	pemPath := "./ecdsa_private_key.pem"
 
 	pemData, err := os.ReadFile(pemPath)
-
 	if err != nil {
-		log.Fatal("failed to read pem data from file")
+		log.Println("failed to read pem data from file")
+		key := generateEcdsaPrivateKey()
+		ecdsaPrivateKey = key
+		return key
 	}
 
 	block, _ := pem.Decode([]byte(pemData))
@@ -33,7 +41,7 @@ func GetEcdsaPrivateKey() *ecdsa.PrivateKey {
 }
 
 /*This function will great a random ecdsa private key and store it in a pem file*/
-func GenerateEcdsaPrivateKey() {
+func generateEcdsaPrivateKey() *ecdsa.PrivateKey {
 	// Generate an ECDSA private key
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -63,5 +71,5 @@ func GenerateEcdsaPrivateKey() {
 	if err != nil {
 		log.Fatal("Failed to write private key to file:", err)
 	}
-
+	return privateKey
 }

@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS user_post_comments (
     created_at TIMESTAMP DEFAULT NOW(),
     content text,
     pictures_attached TEXT[],
-    nested_comments TEXT[],
+    nested_comments TEXT[]
 );
 
 CREATE TABLE IF NOT EXISTS user_comment_like (

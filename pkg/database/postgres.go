@@ -3,7 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -34,51 +36,57 @@ func DBConnection() *sql.DB {
 
 func CreateInitialDBStructure() {
 
-	// db, err := DBConnection()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	db := DBConnection()
 
-	// sqlFile, err := os.ReadFile("./sql/createTables.sql")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// err = db.Exec(string(sqlFile)).Error
-	// if err != nil {
-	// 	fmt.Println(err)
-	// } else {
-	// 	fmt.Println("Initial Tables are Created Successfully!!!")
-	// }
+	sqlFile, err := os.ReadFile("./sql/createTables.sql")
+	if err != nil {
+		log.Fatal(err)
+	}
+	sqlString := string(sqlFile)
+	statements := strings.Split(sqlString, ";")
+	for _, statement := range statements {
+		statement = strings.TrimSpace(statement)
+		if statement == "" {
+			continue
+		}
+		_, err = db.Exec(statement)
+		if err != nil {
+			log.Fatal("Error creating initial tables: ", err)
+		}
+	}
+}
+
+func ResetDB() {
+	dbConfig := getDBConfig()
+	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=postgres sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port)
+	db, err := sql.Open("postgres", connString)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	_, err = db.Exec(fmt.Sprintf("DROP DATABASE %s", dbConfig.dbname))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Successfully dropped database %s\n", dbConfig.dbname)
 
 }
-func ResetDB() {
-	// db, err := DBConnection()
-	// if err != nil {
-	// 	fmt.Println("error here!1")
-	// 	log.Fatal("Error connecting to db: ", err)
-	// }
-	// if err := db.Exec("DROP DATABASE Ctrix_Social_DB"); err != nil {
-	// 	fmt.Println("error here!2")
+func CreateDB() {
+	dbConfig := getDBConfig()
+	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=postgres sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port)
+	db, err := sql.Open("postgres", connString)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", dbConfig.dbname))
+	if err != nil {
+		panic(err)
+	}
 
-	// 	log.Fatal(err)
-	// }
-	// if err := db.Exec("CREATE DATABASE IF NOT EXISTS Ctrix_Social_DB"); err != nil {
-	// 	fmt.Println("error here!3")
-
-	// 	log.Fatal(err)
-	// }
-
-	// sqlFile, err := os.ReadFile("./sql/resetDB.sql")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// err = db.Exec(string(sqlFile)).Error
-	// if err != nil {
-	// 	fmt.Println(err)
-	// } else {
-	// 	fmt.Println("DB Resetted Successfully!!!")
-	// }
-
+	fmt.Println("DB Created Successfully!")
 }
 
 type dbConfig struct {

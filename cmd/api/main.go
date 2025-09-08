@@ -1,15 +1,16 @@
 package main
 
 import (
+	"net/http"
 	"os"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/database"
 )
 
 func main() {
 
-	// mainRouter := chi.NewRouter()
+	mainRouter := chi.NewRouter()
 
 	loadEnvironment()
 
@@ -18,9 +19,14 @@ func main() {
 	if port == "" {
 		port = "4000"
 	}
-	database.CreateInitialDBStructure()
 
-	// http.ListenAndServe(":"+port, mainRouter)
+	mainRouter.Route("/api", func(r chi.Router) {
+		r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("Ctrix Social Backend!"))
+		})
+	})
+
+	http.ListenAndServe(":"+port, mainRouter)
 }
 
 func loadEnvironment() {

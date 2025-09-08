@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/mcctrix/ctrix-social-go-backend/utils"
+	"github.com/mcctrix/ctrix-social-go-backend/pkg/security"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func loadEnvironment() {
 	if _, err := os.Stat("./ecdsa_private_key.pem"); err == nil {
 		// Pem File exist so do nothing
 	} else {
-		utils.GenerateEcdsaPrivateKey()
+		security.GenerateEcdsaPrivateKey()
 	}
 	// db.ResetDB()
 	// db.CreateInitialDBStructure()

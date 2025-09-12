@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO users_post_comment (id, post_id, creator_id, content) VALUES
+INSERT INTO post_comments (id, post_id, creator_id, content) VALUES
 ('c1_1a2b', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', '1', 'Great post! Very insightful. 👍'),
 ('c2_1a2b', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', '2', 'Totally agree with this. Thanks for sharing! 😊'),
 ('c3_1a2b', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', '3', 'This really helped me understand the topic better. 🙏'),

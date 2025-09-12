@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO users_post (id, creator_id, text_content) VALUES
+INSERT INTO posts (id, creator_id, text_content) VALUES
 ('1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', '1', 'Quick tip: Always use `go fmt`! Your future self will thank you. 🚀 #GoLang #CodingTips'),
 ('2a3b4c5d-6e7f-8a9b-0c1d-2e3f4a5b6c7d', '1', 'Just discovered a neat trick with goroutines. Concurrency is fun! ✨ #GoConcurrency'),
 ('3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d', '1', 'Debugging a tricky bug. Sometimes, a fresh pair of eyes is all you need. 👀 #Debugging'),

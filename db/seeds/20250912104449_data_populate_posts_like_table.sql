@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO users_post_like (user_id, post_id) VALUES
+INSERT INTO post_likes (user_id, post_id) VALUES
 ('1', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
 ('3', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),
 ('2', '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d'),

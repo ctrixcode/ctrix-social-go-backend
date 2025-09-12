@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO users_post_comment_like (user_id, comment_id) VALUES
+INSERT INTO post_comment_likes (user_id, comment_id) VALUES
 ('1', 'c2_1a2b'),
 ('2', 'c1_1a2b'),
 ('3', 'c1_1a2b'),

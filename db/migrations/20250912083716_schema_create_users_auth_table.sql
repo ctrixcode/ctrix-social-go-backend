@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS users_auth (
-    id VARCHAR(50) PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(50) UNIQUE NOT NULL,
     username VARCHAR(30) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL,

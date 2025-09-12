@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users_profile (
     last_name VARCHAR(30),
     profile_picture VARCHAR(200),
     avatar VARCHAR(25),
-    relation_status VARCHAR(12),
+    relation_status VARCHAR(20),
     dob DATE,
     bio VARCHAR(250),
     gender VARCHAR(6),

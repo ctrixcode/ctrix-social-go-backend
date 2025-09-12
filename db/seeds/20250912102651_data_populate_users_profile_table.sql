@@ -1,14 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO user_profile (id, first_name, last_name, profile_picture, avatar, last_seen, post_count, followers, followings) VALUES
-('1', 'Anmol', 'Jain', 'https://example.com/profile/aj_noob.jpg', 'avatar_aj', NOW(), 5, '{}', '{}'),
-('2', 'Ctrix', 'User', 'https://example.com/profile/ctrix.jpg', 'avatar_ctrix', NOW(), 10, '{}', '{}'),
-('3', 'Mike', 'Jones', 'https://example.com/profile/mike.jpg', 'avatar_mj', NOW(), 2, '{}', '{}'),
-('4', 'Sara', 'Connor', 'https://example.com/profile/sara.jpg', 'avatar_sc', NOW(), 8, '{}', '{}'),
-('5', 'Chris', 'Evans', 'https://example.com/profile/chris.jpg', 'avatar_ce', NOW(), 3, '{}', '{}'),
-('6', 'Lisa', 'Brown', 'https://example.com/profile/lisa.jpg', 'avatar_lb', NOW(), 7, '{}', '{}'),
-('7', 'David', 'Lee', 'https://example.com/profile/david.jpg', 'avatar_dl', NOW(), 1, '{}', '{}'),
-('8', 'Emily', 'White', 'https://example.com/profile/emily.jpg', 'avatar_ew', NOW(), 6, '{}', '{}'),
-('9', 'Peter', 'Parker', 'https://example.com/profile/peter.jpg', 'avatar_pp', NOW(), 4, '{}', '{}'),
-('10', 'Mary', 'Jane', 'https://example.com/profile/mary.jpg', 'avatar_mjn', NOW(), 9, '{}', '{}');
+INSERT INTO users_profile (id, first_name, last_name, avatar, relation_status, dob, bio, gender, family_members, hobbies) VALUES
+('1', 'Anmol', 'Jain', 'avatar_aj', 'Single', '1990-01-01', 'Passionate developer and tech enthusiast.', 'Male', '{}', '{coding,gaming,reading}'),
+('2', 'Ctrix', 'User', 'avatar_ctrix', 'Married', '1985-05-15', 'Building awesome things with Go.', 'Female', '{}', '{traveling,photography,cooking}'),
+('3', 'Mike', 'Jones', 'avatar_mj', 'Single', '1992-03-20', 'Loves hiking and photography.', 'Male', '{}', '{hiking,photography,climbing}'),
+('4', 'Sara', 'Connor', 'avatar_sc', 'In a relationship', '1988-11-10', 'Future of humanity depends on me.', 'Female', '{}', '{survival,tactics,running}'),
+('5', 'Chris', 'Evans', 'avatar_ce', 'Single', '1981-06-13', 'Avenger by day, actor by night.', 'Male', '{}', '{acting,fitness,charity}'),
+('6', 'Lisa', 'Brown', 'avatar_lb', 'Married', '1995-08-22', 'Enjoying life one day at a time.', 'Female', '{}', '{gardening,baking,yoga}'),
+('7', 'David', 'Lee', 'avatar_dl', 'Single', '1993-04-05', 'Exploring new technologies.', 'Male', '{}', '{tech,gadgets,cycling}'),
+('8', 'Emily', 'White', 'avatar_ew', 'In a relationship', '1991-09-30', 'Artist and nature lover.', 'Female', '{}', '{painting,nature,meditation}'),
+('9', 'Peter', 'Parker', 'avatar_pp', 'Single', '2000-08-01', 'Your friendly neighborhood Spider-Man.', 'Male', '{}', '{web-slinging,science,photography}'),
+('10', 'Mary', 'Jane', 'avatar_mjn', 'In a relationship', '2001-03-17', 'Aspiring actress and model.', 'Female', '{}', '{acting,modeling,dancing}');
 -- +goose StatementEnd

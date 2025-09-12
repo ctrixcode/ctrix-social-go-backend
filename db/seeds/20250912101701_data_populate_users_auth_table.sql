@@ -12,3 +12,8 @@ INSERT INTO users_auth (id, email, username, password, created_at) VALUES
 ('9', 'peter.parker@example.com', 'peter.parker', 'password123', NOW()),
 ('10', 'mary.jane@example.com', 'mary.jane', 'password123', NOW());
 -- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DELETE FROM users_auth where true;
+-- +goose StatementEnd

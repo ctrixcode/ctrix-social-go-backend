@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS users_post (
     group_id VARCHAR(50),
     text_content TEXT,
     pictures_attached TEXT[],
-    comments TEXT[],
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP DEFAULT NULL

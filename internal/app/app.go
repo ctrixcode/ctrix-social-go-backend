@@ -12,7 +12,6 @@ import (
 	// Import your modules here
 
 	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/database" // Import database package
 )
 
@@ -25,11 +24,6 @@ type Application struct {
 
 // NewApplication creates and initializes a new Application instance
 func NewApplication() (*Application, error) {
-	profileRepo := users_profile.NewRepository(database.DBConnection())
-	profile, err := profileRepo.GetProfileByID("1")
-	fmt.Println(profile)
-	fmt.Println(err)
-
 	app := &Application{
 		Router: chi.NewRouter(),
 	}

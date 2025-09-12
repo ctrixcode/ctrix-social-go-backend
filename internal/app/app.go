@@ -1,13 +1,13 @@
 package app
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jmoiron/sqlx"
 
 	// Import your modules here
 	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
@@ -17,7 +17,7 @@ import (
 // Application holds all application-wide dependencies
 type Application struct {
 	Router *chi.Mux
-	DB     *sql.DB
+	DB     *sqlx.DB
 	// Add other dependencies like Logger, Config, etc. here
 }
 

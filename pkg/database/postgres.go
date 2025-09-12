@@ -1,24 +1,24 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/jmoiron/sqlx" // Changed from "database/sql"
 	_ "github.com/lib/pq"
 )
 
-var dbInstance *sql.DB
+var dbInstance *sqlx.DB // Changed to *sqlx.DB
 
-func DBConnection() *sql.DB {
+func DBConnection() *sqlx.DB { // Changed return type
 	if dbInstance != nil {
 		return dbInstance
 	}
 	dbConfig := getDBConfig()
 	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port, dbConfig.dbname)
-	db, err := sql.Open("postgres", connString)
+	db, err := sqlx.Open("postgres", connString) // Changed to sqlx.Open
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func DBConnection() *sql.DB {
 
 func CreateInitialDBStructure() {
 
-	db := DBConnection()
+	db := DBConnection() // This will now return *sqlx.DB
 
 	sqlFile, err := os.ReadFile("./sql/createTables.sql")
 	if err != nil {
@@ -59,7 +59,7 @@ func CreateInitialDBStructure() {
 func ResetDB() {
 	dbConfig := getDBConfig()
 	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=postgres sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port)
-	db, err := sql.Open("postgres", connString)
+	db, err := sqlx.Open("postgres", connString) // Changed to sqlx.Open
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,7 @@ func ResetDB() {
 func CreateDB() {
 	dbConfig := getDBConfig()
 	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=postgres sslmode=disable", dbConfig.username, dbConfig.password, dbConfig.host, dbConfig.port)
-	db, err := sql.Open("postgres", connString)
+	db, err := sqlx.Open("postgres", connString) // Changed to sqlx.Open
 	if err != nil {
 		panic(err)
 	}

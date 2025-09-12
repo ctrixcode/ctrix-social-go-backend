@@ -22,7 +22,7 @@ func NewRepository(db *sqlx.DB) SettingRepository {
 func (r *pgSettingRepository) CreateSetting(setting *UserSetting) error {
 	query, args, err := r.sq.Insert("users_setting").
 		Columns("id", "block_user", "hide_post", "hide_story", "show_online").
-		Values(setting.ID, setting.Block_user, setting.Hide_post, setting.Hide_story, setting.Show_online).
+		Values(setting.ID, setting.BlockUser, setting.HidePost, setting.HideStory, setting.ShowOnline).
 		ToSql()
 	if err != nil {
 		return err
@@ -54,10 +54,10 @@ func (r *pgSettingRepository) GetSettingByID(id string) (*UserSetting, error) {
 
 func (r *pgSettingRepository) UpdateSetting(setting *UserSetting) error {
 	query, args, err := r.sq.Update("users_setting").
-		Set("block_user", setting.Block_user).
-		Set("hide_post", setting.Hide_post).
-		Set("hide_story", setting.Hide_story).
-		Set("show_online", setting.Show_online).
+		Set("block_user", setting.BlockUser).
+		Set("hide_post", setting.HidePost).
+		Set("hide_story", setting.HideStory).
+		Set("show_online", setting.ShowOnline).
 		Where(sq.Eq{"id": setting.ID}).
 		ToSql()
 	if err != nil {

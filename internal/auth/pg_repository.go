@@ -13,7 +13,7 @@ type pgAuthRepository struct {
 	sq sq.StatementBuilderType
 }
 
-func NewAuthRepository(db *sqlx.DB) AuthRepository {
+func NewRepository(db *sqlx.DB) AuthRepository {
 	return &pgAuthRepository{
 		db: db,
 		sq: sq.StatementBuilder.PlaceholderFormat(sq.Dollar),

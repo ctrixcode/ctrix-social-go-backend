@@ -1,10 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
-INSERT INTO users_setting (id, block_user, hide_post, hide_story, show_online, created_at) VALUES
-('1', '{"2"}', '{}', '{}', true, NOW()),
-('2', '{"4"}', '{}', '{}', true, NOW()),
-('3', '{}', '{}', '{}', false, NOW()),
-('4', '{"1", "3"}', '{}', '{}', true, NOW());
+INSERT INTO users_setting (id, block_user, hide_post, hide_story, show_online) VALUES
+('1', '{"2"}', '{}', '{}', true),
+('2', '{"4"}', '{}', '{}', true),
+('3', '{}', '{}', '{}', false),
+('4', '{"1", "3"}', '{}', '{}', true);
 -- +goose StatementEnd
 
 -- +goose Down

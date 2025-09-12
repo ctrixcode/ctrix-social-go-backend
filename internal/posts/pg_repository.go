@@ -2,6 +2,7 @@ package posts
 
 import (
 	"database/sql"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -24,6 +25,7 @@ func (r *pgPostRepository) CreatePost(post *Post) error {
 		Columns("id", "creator_id", "group_id", "text_content", "pictures_attached", "created_at", "updated_at", "deleted_at").
 		Values(post.ID, post.CreatorID, post.GroupID, post.TextContent, post.PicturesAttached, post.CreatedAt, post.UpdatedAt, post.DeletedAt).
 		ToSql()
+
 	if err != nil {
 		return err
 	}
@@ -38,6 +40,7 @@ func (r *pgPostRepository) GetPostByID(id string) (*Post, error) {
 		From("posts").
 		Where(sq.Eq{"id": id}).
 		ToSql()
+
 	if err != nil {
 		return nil, err
 	}
@@ -58,9 +61,9 @@ func (r *pgPostRepository) UpdatePost(post *Post) error {
 		Set("group_id", post.GroupID).
 		Set("text_content", post.TextContent).
 		Set("pictures_attached", post.PicturesAttached).
-		Set("deleted_at", post.DeletedAt).
 		Where(sq.Eq{"id": post.ID}).
 		ToSql()
+
 	if err != nil {
 		return err
 	}
@@ -70,9 +73,10 @@ func (r *pgPostRepository) UpdatePost(post *Post) error {
 }
 
 func (r *pgPostRepository) DeletePost(id string) error {
-	query, args, err := r.sq.Delete("posts").
-		Where(sq.Eq{"id": id}).
-		ToSql()
+	query, args, err := r.sq.Update("posts").
+		Set("deleted_at", time.Now()).
+		Where(sq.Eq{"id": id}).ToSql()
+
 	if err != nil {
 		return err
 	}

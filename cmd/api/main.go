@@ -1,38 +1,36 @@
 package main
 
 import (
-	"net/http"
+	"log"
 	"os"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/app" // New import for the app package
 )
 
 func main() {
-
-	mainRouter := chi.NewRouter()
-
 	loadEnvironment()
 
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		port = "4000"
+	application, err := app.NewApplication()
+	if err != nil {
+		log.Fatalf("Failed to initialize application: %v", err)
 	}
 
-	mainRouter.Route("/api", func(r chi.Router) {
-		r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Ctrix Social Backend!"))
-		})
-	})
+	application.SetupRoutes()
 
-	http.ListenAndServe(":"+port, mainRouter)
+	if err := application.Serve(); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }
 
 func loadEnvironment() {
 	// Load the .env file in the current directory
-	godotenv.Load()
-
-	// db.ResetDB()
-	// db.CreateInitialDBStructure()
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("No .env file found or failed to load: %v", err)
+	}
+	// You might want to check for critical environment variables here
+	if os.Getenv("POSTGRES_HOST") == "" {
+		log.Fatal("POSTGRES_HOST environment variable not set")
+	}
 }

@@ -14,6 +14,6 @@ type UsersData struct {
 	LastSeen   *time.Time     `db:"last_seen"`
 	Followers  pq.StringArray `db:"followers"`
 	Followings pq.StringArray `db:"followings"`
-	Created_at *time.Time     `db:"created_at"`
-	Updated_at *time.Time     `db:"updated_at"`
+	CreatedAt  *time.Time     `db:"created_at"`
+	UpdatedAt  *time.Time     `db:"updated_at"`
 }

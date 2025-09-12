@@ -22,7 +22,7 @@ func NewRepository(db *sqlx.DB) ProfileRepository {
 func (r *pgProfileRepository) CreateProfile(profile *UserProfile) error {
 	query, args, err := r.sq.Insert("users_profile").
 		Columns("id", "first_name", "last_name", "profile_picture", "avatar", "relation_status", "dob", "bio", "gender", "family_members", "hobbies").
-		Values(profile.ID, profile.First_name, profile.Last_name, profile.ProfilePicture, profile.Avatar, profile.RelationStatus, profile.Dob, profile.Bio, profile.Gender, profile.FamilyMembers, profile.Hobbies).
+		Values(profile.ID, profile.FirstName, profile.LastName, profile.ProfilePicture, profile.Avatar, profile.RelationStatus, profile.Dob, profile.Bio, profile.Gender, profile.FamilyMembers, profile.Hobbies).
 		ToSql()
 	if err != nil {
 		return err
@@ -54,8 +54,8 @@ func (r *pgProfileRepository) GetProfileByID(id string) (*UserProfile, error) {
 
 func (r *pgProfileRepository) UpdateProfile(profile *UserProfile) error {
 	query, args, err := r.sq.Update("users_profile").
-		Set("first_name", profile.First_name).
-		Set("last_name", profile.Last_name).
+		Set("first_name", profile.FirstName).
+		Set("last_name", profile.LastName).
 		Set("profile_picture", profile.ProfilePicture).
 		Set("avatar", profile.Avatar).
 		Set("relation_status", profile.RelationStatus).

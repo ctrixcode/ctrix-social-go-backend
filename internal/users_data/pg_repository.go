@@ -22,7 +22,7 @@ func NewRepository(db *sqlx.DB) DataRepository {
 func (r *pgDataRepository) CreateData(data *UsersData) error {
 	query, args, err := r.sq.Insert("users_data").
 		Columns("id", "posts", "stories", "notes", "last_seen", "followers", "followings", "created_at", "updated_at").
-		Values(data.ID, data.Posts, data.Stories, data.Notes, data.LastSeen, data.Followers, data.Followings, data.Created_at, data.Updated_at). // Corrected Last_seen to LastSeen
+		Values(data.ID, data.Posts, data.Stories, data.Notes, data.LastSeen, data.Followers, data.Followings, data.CreatedAt, data.UpdatedAt).
 		ToSql()
 	if err != nil {
 		return err

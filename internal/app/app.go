@@ -10,6 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	// Import your modules here
+	"github.com/mcctrix/ctrix-social-go-backend/internal/auth"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/database" // Import database package
 )
@@ -23,6 +24,10 @@ type Application struct {
 
 // NewApplication creates and initializes a new Application instance
 func NewApplication() (*Application, error) {
+	authRepo := auth.NewAuthRepository(database.DBConnection())
+	user, err := authRepo.GetUserByID("1")
+	fmt.Println(user)
+	fmt.Println(err)
 	app := &Application{
 		Router: chi.NewRouter(),
 	}

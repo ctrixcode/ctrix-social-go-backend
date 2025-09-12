@@ -1,4 +1,4 @@
-package user_profile
+package users_profile
 
 type ProfileRepository interface {
 	CreateProfile(profile *UserProfile) error

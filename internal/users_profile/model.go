@@ -1,4 +1,4 @@
-package user_profile
+package users_profile
 
 import "time"
 

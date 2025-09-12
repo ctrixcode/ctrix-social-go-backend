@@ -36,7 +36,7 @@ func (r *pgAuthRepository) CreateUser(user *UserAuth) error {
 
 func (r *pgAuthRepository) GetUserByID(id string) (*UserAuth, error) {
 	var user UserAuth
-	query, args, err := r.sq.Select("id", "email", "username", "password", "created_at", "updated_at", "deleted_at").
+	query, args, err := r.sq.Select("*").
 		From("users_auth").
 		Where(sq.Eq{"id": id}).
 		ToSql()

@@ -38,6 +38,16 @@ func NewAuthHandler(repo AuthRepository, sessionTokenRepo auth_session_tokens.Au
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) error {
+	// Check if user is already logged in
+	authHeader := r.Header.Get("Authorization")
+	if authHeader != "" && len(authHeader) > len("Bearer ") && authHeader[:len("Bearer ")] == "Bearer " {
+		tokenString := authHeader[len("Bearer "):]
+		_, err := h.jwtService.ValidateAccessToken(tokenString)
+		if err == nil {
+			return errors.BadRequestError(errors.ErrBadRequest, "Already logged in")
+		}
+	}
+
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return errors.BadRequestError(errors.ErrBadRequest)
@@ -106,6 +116,16 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) error {
+	// Check if user is already logged in
+	authHeader := r.Header.Get("Authorization")
+	if authHeader != "" && len(authHeader) > len("Bearer ") && authHeader[:len("Bearer ")] == "Bearer " {
+		tokenString := authHeader[len("Bearer "):]
+		_, err := h.jwtService.ValidateAccessToken(tokenString)
+		if err == nil {
+			return errors.BadRequestError(errors.ErrBadRequest, "Already logged in")
+		}
+	}
+
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return errors.BadRequestError(errors.ErrBadRequest, err.Error())

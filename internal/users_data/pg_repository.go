@@ -22,8 +22,7 @@ func NewRepository(db *sqlx.DB) DataRepository {
 func (r *pgDataRepository) CreateData(data *UsersData) error {
 	query, args, err := r.sq.Insert("users_data").
 		Columns("id", "posts", "stories", "notes", "last_seen", "followers", "followings", "created_at", "updated_at").
-		Values(data.ID, data.Posts, data.Stories, data.Notes, data.LastSeen, data.Followers, data.Followings, data.CreatedAt, data.UpdatedAt).
-		ToSql()
+		Values(data.ID, data.Posts, data.Stories, data.Notes, data.LastSeen, data.Followers, data.Followings, data.CreatedAt, data.UpdatedAt).ToSql()
 	if err != nil {
 		return err
 	}
@@ -33,11 +32,16 @@ func (r *pgDataRepository) CreateData(data *UsersData) error {
 }
 
 func (r *pgDataRepository) GetDataByID(id string) (*UsersData, error) {
+	return r.GetDataByIDWithFields(id, []string{}) // Call the new method with empty fields
+}
+
+func (r *pgDataRepository) GetDataByIDWithFields(id string, fields []string) (*UsersData, error) {
 	var data UsersData
-	query, args, err := r.sq.Select("*").
+	builder := r.sq.Select(r.formatFields(fields)...).
 		From("users_data").
-		Where(sq.Eq{"id": id}).
-		ToSql()
+		Where(sq.Eq{"id": id})
+
+	query, args, err := builder.ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +61,7 @@ func (r *pgDataRepository) UpdateData(data *UsersData) error {
 		Set("posts", data.Posts).
 		Set("stories", data.Stories).
 		Set("notes", data.Notes).
-		Set("last_seen", data.LastSeen). // Corrected Last_seen to LastSeen
+		Set("last_seen", data.LastSeen).
 		Set("followers", data.Followers).
 		Set("followings", data.Followings).
 		Where(sq.Eq{"id": data.ID}).
@@ -80,4 +84,45 @@ func (r *pgDataRepository) DeleteData(id string) error {
 
 	_, err = r.db.Exec(query, args...)
 	return err
+}
+
+// formatFields converts GraphQL field names to database column names.
+// If fields is empty, it returns "*" to select all columns.
+func (r *pgDataRepository) formatFields(fields []string) []string {
+	if len(fields) == 0 {
+		return []string{"*"}
+	}
+
+	// Map GraphQL field names to database column names
+	// This is a simple example, more complex mappings might be needed
+	// depending on your schema and database conventions.
+	formatted := make([]string, 0, len(fields))
+	for _, field := range fields {
+		switch field {
+		case "id":
+			formatted = append(formatted, "id")
+		case "posts":
+			formatted = append(formatted, "posts")
+		case "stories":
+			formatted = append(formatted, "stories")
+		case "notes":
+			formatted = append(formatted, "notes")
+		case "lastSeen":
+			formatted = append(formatted, "last_seen")
+		case "followers":
+			formatted = append(formatted, "followers")
+		case "followings":
+			formatted = append(formatted, "followings")
+		case "createdAt":
+			formatted = append(formatted, "created_at")
+		case "updatedAt":
+			formatted = append(formatted, "updated_at")
+		default:
+			// If a field is not explicitly mapped, use its snake_case version
+			// or handle as an error, depending on strictness.
+			// For now, we'll just append it as is, assuming it matches.
+			formatted = append(formatted, field)
+		}
+	}
+	return formatted
 }

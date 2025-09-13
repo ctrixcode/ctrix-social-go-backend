@@ -2,6 +2,12 @@
 
 package model
 
+type CreateUserDataInput struct {
+	LastSeen   *string  `json:"lastSeen,omitempty"`
+	Followers  []string `json:"followers,omitempty"`
+	Followings []string `json:"followings,omitempty"`
+}
+
 type CreateUserProfileInput struct {
 	FirstName      *string  `json:"firstName,omitempty"`
 	LastName       *string  `json:"lastName,omitempty"`
@@ -19,6 +25,12 @@ type Mutation struct {
 }
 
 type Query struct {
+}
+
+type UpdateUserDataInput struct {
+	LastSeen   *string  `json:"lastSeen,omitempty"`
+	Followers  []string `json:"followers,omitempty"`
+	Followings []string `json:"followings,omitempty"`
 }
 
 type UpdateUserProfileInput struct {
@@ -39,6 +51,12 @@ type UpdateUserSettingInput struct {
 	HidePost   []string `json:"hidePost,omitempty"`
 	HideStory  []string `json:"hideStory,omitempty"`
 	ShowOnline *bool    `json:"showOnline,omitempty"`
+}
+
+type UserData struct {
+	LastSeen   *string  `json:"lastSeen,omitempty"`
+	Followers  []string `json:"followers,omitempty"`
+	Followings []string `json:"followings,omitempty"`
 }
 
 type UserProfile struct {

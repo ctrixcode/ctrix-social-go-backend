@@ -42,16 +42,25 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
+		CreateMyUserData    func(childComplexity int, input model.CreateUserDataInput) int
 		CreateMyUserProfile func(childComplexity int, input model.CreateUserProfileInput) int
 		SayHello            func(childComplexity int, name string) int
+		UpdateMyUserData    func(childComplexity int, input model.UpdateUserDataInput) int
 		UpdateMyUserProfile func(childComplexity int, input model.UpdateUserProfileInput) int
 		UpdateMyUserSetting func(childComplexity int, input model.UpdateUserSettingInput) int
 	}
 
 	Query struct {
 		Hello         func(childComplexity int) int
+		MyUserData    func(childComplexity int) int
 		MyUserProfile func(childComplexity int) int
 		MyUserSetting func(childComplexity int) int
+	}
+
+	UserData struct {
+		Followers  func(childComplexity int) int
+		Followings func(childComplexity int) int
+		LastSeen   func(childComplexity int) int
 	}
 
 	UserProfile struct {
@@ -94,6 +103,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Mutation.createMyUserData":
+		if e.complexity.Mutation.CreateMyUserData == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createMyUserData_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateMyUserData(childComplexity, args["input"].(model.CreateUserDataInput)), true
+
 	case "Mutation.createMyUserProfile":
 		if e.complexity.Mutation.CreateMyUserProfile == nil {
 			break
@@ -117,6 +138,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.SayHello(childComplexity, args["name"].(string)), true
+
+	case "Mutation.updateMyUserData":
+		if e.complexity.Mutation.UpdateMyUserData == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMyUserData_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMyUserData(childComplexity, args["input"].(model.UpdateUserDataInput)), true
 
 	case "Mutation.updateMyUserProfile":
 		if e.complexity.Mutation.UpdateMyUserProfile == nil {
@@ -149,6 +182,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Hello(childComplexity), true
 
+	case "Query.myUserData":
+		if e.complexity.Query.MyUserData == nil {
+			break
+		}
+
+		return e.complexity.Query.MyUserData(childComplexity), true
+
 	case "Query.myUserProfile":
 		if e.complexity.Query.MyUserProfile == nil {
 			break
@@ -162,6 +202,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.MyUserSetting(childComplexity), true
+
+	case "UserData.followers":
+		if e.complexity.UserData.Followers == nil {
+			break
+		}
+
+		return e.complexity.UserData.Followers(childComplexity), true
+
+	case "UserData.followings":
+		if e.complexity.UserData.Followings == nil {
+			break
+		}
+
+		return e.complexity.UserData.Followings(childComplexity), true
+
+	case "UserData.lastSeen":
+		if e.complexity.UserData.LastSeen == nil {
+			break
+		}
+
+		return e.complexity.UserData.LastSeen(childComplexity), true
 
 	case "UserProfile.avatar":
 		if e.complexity.UserProfile.Avatar == nil {
@@ -269,7 +330,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateUserDataInput,
 		ec.unmarshalInputCreateUserProfileInput,
+		ec.unmarshalInputUpdateUserDataInput,
 		ec.unmarshalInputUpdateUserProfileInput,
 		ec.unmarshalInputUpdateUserSettingInput,
 	)
@@ -375,6 +438,33 @@ var sources = []*ast.Source{
 
 type Mutation {
   sayHello(name: String!): String!
+}
+`, BuiltIn: false},
+	{Name: "../schema/user_data.graphqls", Input: `type UserData {
+  lastSeen: String
+  followers: [String!]
+  followings: [String!]
+}
+
+input CreateUserDataInput {
+  lastSeen: String
+  followers: [String!]
+  followings: [String!]
+}
+
+input UpdateUserDataInput {
+  lastSeen: String
+  followers: [String!]
+  followings: [String!]
+}
+
+extend type Query {
+  myUserData: UserData
+}
+
+extend type Mutation {
+  createMyUserData(input: CreateUserDataInput!): UserData!
+  updateMyUserData(input: UpdateUserDataInput!): UserData!
 }
 `, BuiltIn: false},
 	{Name: "../schema/user_profile.graphqls", Input: `type UserProfile {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/healthcheck"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comment_likes"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_likes"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
@@ -73,6 +74,11 @@ func (app *Application) SetupRoutes() {
 					if err := post_comments.SetupPostComments(rPostComments, app.DB); err != nil {
 						panic(err)
 					}
+					rPostComments.Route("/like", func(rPostCommentLikes chi.Router) {
+						if err := post_comment_likes.SetupPostCommentLikes(rPostCommentLikes, app.DB); err != nil {
+							panic(err)
+						}
+					})
 				})
 			})
 		})

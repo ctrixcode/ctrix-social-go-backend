@@ -1,0 +1,14 @@
+type Comment {
+  id: ID!
+  postID: ID!
+  creatorID: ID!
+  content: String!
+  picturesAttached: [String!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+    getCommentByID(id: ID!): Comment
+    getCommentsByPostID(postID: ID!): [Comment!]
+}

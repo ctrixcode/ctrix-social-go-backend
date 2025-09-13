@@ -5,7 +5,7 @@ import (
 )
 
 type Service interface {
-	LikeComment(postCommentLike *PostCommentLike) error
+	LikeComment(userID, commentID string) error
 	UnlikeComment(userID, commentID string) error
 	GetCommentLike(userID, commentID string) (*PostCommentLike, error)
 }
@@ -20,14 +20,19 @@ func NewService(repo PostCommentLikeRepository) Service {
 	}
 }
 
-func (s *service) LikeComment(postCommentLike *PostCommentLike) error {
+func (s *service) LikeComment(userID, commentID string) error {
 	// Check if the comment is already liked by the user
-	existingLike, err := s.repo.GetCommentLike(postCommentLike.UserID, postCommentLike.CommentID)
+	existingLike, err := s.repo.GetCommentLike(userID, commentID)
 	if err != nil {
 		return errors.InternalServerError(errors.ErrInternalServerError)
 	}
 	if existingLike != nil {
 		return errors.BadRequestError(errors.CommentAlreadyLiked)
+	}
+
+	var postCommentLike = &PostCommentLike{
+		UserID:    userID,
+		CommentID: commentID,
 	}
 
 	err = s.repo.LikeComment(postCommentLike)

@@ -41,6 +41,16 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Comment struct {
+		Content          func(childComplexity int) int
+		CreatedAt        func(childComplexity int) int
+		CreatorID        func(childComplexity int) int
+		ID               func(childComplexity int) int
+		PicturesAttached func(childComplexity int) int
+		PostID           func(childComplexity int) int
+		UpdatedAt        func(childComplexity int) int
+	}
+
 	Mutation struct {
 		SayHello            func(childComplexity int, name string) int
 		UpdateMyUserData    func(childComplexity int, input model.UpdateUserDataInput) int
@@ -58,12 +68,14 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Hello         func(childComplexity int) int
-		MyPosts       func(childComplexity int) int
-		MyUserData    func(childComplexity int) int
-		MyUserProfile func(childComplexity int) int
-		MyUserSetting func(childComplexity int) int
-		Post          func(childComplexity int, id string) int
+		GetCommentByID      func(childComplexity int, id string) int
+		GetCommentsByPostID func(childComplexity int, postID string) int
+		Hello               func(childComplexity int) int
+		MyPosts             func(childComplexity int) int
+		MyUserData          func(childComplexity int) int
+		MyUserProfile       func(childComplexity int) int
+		MyUserSetting       func(childComplexity int) int
+		Post                func(childComplexity int, id string) int
 	}
 
 	UserData struct {
@@ -111,6 +123,55 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Comment.content":
+		if e.complexity.Comment.Content == nil {
+			break
+		}
+
+		return e.complexity.Comment.Content(childComplexity), true
+
+	case "Comment.createdAt":
+		if e.complexity.Comment.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.CreatedAt(childComplexity), true
+
+	case "Comment.creatorID":
+		if e.complexity.Comment.CreatorID == nil {
+			break
+		}
+
+		return e.complexity.Comment.CreatorID(childComplexity), true
+
+	case "Comment.id":
+		if e.complexity.Comment.ID == nil {
+			break
+		}
+
+		return e.complexity.Comment.ID(childComplexity), true
+
+	case "Comment.picturesAttached":
+		if e.complexity.Comment.PicturesAttached == nil {
+			break
+		}
+
+		return e.complexity.Comment.PicturesAttached(childComplexity), true
+
+	case "Comment.postID":
+		if e.complexity.Comment.PostID == nil {
+			break
+		}
+
+		return e.complexity.Comment.PostID(childComplexity), true
+
+	case "Comment.updatedAt":
+		if e.complexity.Comment.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.UpdatedAt(childComplexity), true
 
 	case "Mutation.sayHello":
 		if e.complexity.Mutation.SayHello == nil {
@@ -201,6 +262,30 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Post.UpdatedAt(childComplexity), true
+
+	case "Query.getCommentByID":
+		if e.complexity.Query.GetCommentByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCommentByID_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCommentByID(childComplexity, args["id"].(string)), true
+
+	case "Query.getCommentsByPostID":
+		if e.complexity.Query.GetCommentsByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCommentsByPostID_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCommentsByPostID(childComplexity, args["postID"].(string)), true
 
 	case "Query.hello":
 		if e.complexity.Query.Hello == nil {
@@ -476,6 +561,20 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../schema/comment.graphqls", Input: `type Comment {
+  id: ID!
+  postID: ID!
+  creatorID: ID!
+  content: String!
+  picturesAttached: [String!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+    getCommentByID(id: ID!): Comment
+    getCommentsByPostID(postID: ID!): [Comment!]
+}`, BuiltIn: false},
 	{Name: "../schema/post.graphqls", Input: `type Post {
   id: ID!
   groupID: ID

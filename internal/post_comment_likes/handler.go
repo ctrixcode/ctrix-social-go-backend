@@ -1,9 +1,9 @@
 package post_comment_likes
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
@@ -23,39 +23,35 @@ func NewPostCommentLikeHandler(service Service, validator *validator.Validate) *
 }
 
 func (h *PostCommentLikeHandler) LikeComment(w http.ResponseWriter, r *http.Request) error {
-	var req LikeCommentRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
+
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
 	}
+	commentID := chi.URLParam(r, "id")
 
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
-	}
-
-	postCommentLike := LikeCommentRequestToPostCommentLike(&req)
-
-	if err := h.service.LikeComment(postCommentLike); err != nil {
+	if err := h.service.LikeComment(userID, commentID); err != nil {
 		if _, ok := err.(*errors.APIError); ok {
 			return err
 		}
 		return errors.InternalServerError(errors.FailedToLikeComment, err.Error())
 	}
 
-	response.JSONSuccess(w, PostCommentLikeToPostCommentLikeResponse(postCommentLike), http.StatusCreated, "Comment liked successfully")
+	response.JSONSuccess(w, nil, http.StatusCreated, "Comment liked successfully")
 	return nil
 }
 
 func (h *PostCommentLikeHandler) UnlikeComment(w http.ResponseWriter, r *http.Request) error {
-	var req UnlikeCommentRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+	commentID := chi.URLParam(r, "id")
+	if commentID == "" {
+		return errors.BadRequestError(errors.ErrBadRequest)
 	}
 
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
-	}
-
-	if err := h.service.UnlikeComment(req.UserID, req.CommentID); err != nil {
+	if err := h.service.UnlikeComment(userID, commentID); err != nil {
 		if _, ok := err.(*errors.APIError); ok {
 			return err
 		}

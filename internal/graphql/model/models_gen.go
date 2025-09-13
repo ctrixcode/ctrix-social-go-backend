@@ -2,6 +2,16 @@
 
 package model
 
+type Comment struct {
+	ID               string   `json:"id"`
+	PostID           string   `json:"postID"`
+	CreatorID        string   `json:"creatorID"`
+	Content          string   `json:"content"`
+	PicturesAttached []string `json:"picturesAttached,omitempty"`
+	CreatedAt        string   `json:"createdAt"`
+	UpdatedAt        string   `json:"updatedAt"`
+}
+
 type Mutation struct {
 }
 

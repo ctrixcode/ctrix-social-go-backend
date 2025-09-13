@@ -36,6 +36,12 @@ func NewJWTService() (*JWTService, error) {
 	}, nil
 }
 
+type RefreshTokenInfo struct {
+	TokenString string
+	JTI         string
+	ExpiresAt   time.Time
+}
+
 func (s *JWTService) GenerateAccessToken(userID string) (string, error) {
 	expirationTime := time.Now().Add(AccessTokenDuration)
 	claims := &Claims{
@@ -54,9 +60,9 @@ func (s *JWTService) GenerateAccessToken(userID string) (string, error) {
 	return token.SignedString(s.privateKey)
 }
 
-func (s *JWTService) GenerateRefreshToken(userID string) (string, string, time.Time, error) {
+func (s *JWTService) GenerateRefreshToken(userID string) (*RefreshTokenInfo, error) {
 	expirationTime := time.Now().Add(RefreshTokenDuration)
-	jti := uuid.New().String()
+	jti := uuid.New().String() // Generate a unique JWT ID
 	claims := &Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -73,9 +79,13 @@ func (s *JWTService) GenerateRefreshToken(userID string) (string, string, time.T
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	tokenString, err := token.SignedString(s.privateKey)
 	if err != nil {
-		return "", "", time.Time{}, err
+		return nil, err
 	}
-	return tokenString, jti, expirationTime, nil
+	return &RefreshTokenInfo{
+		TokenString: tokenString,
+		JTI:         jti,
+		ExpiresAt:   expirationTime,
+	}, nil
 }
 
 func (s *JWTService) ValidateAccessToken(tokenString string) (*Claims, error) {

@@ -20,16 +20,16 @@ type AuthService interface {
 }
 
 type authService struct {
-	repo             AuthRepository
-	sessionTokenRepo auth_session_tokens.AuthSessionTokenRepository
-	jwtService       *jwt.JWTService
+	repo                AuthRepository
+	sessionTokenService auth_session_tokens.Service
+	jwtService          *jwt.JWTService
 }
 
-func NewAuthService(repo AuthRepository, sessionTokenRepo auth_session_tokens.AuthSessionTokenRepository, jwtService *jwt.JWTService) AuthService {
+func NewAuthService(repo AuthRepository, sessionTokenService auth_session_tokens.Service, jwtService *jwt.JWTService) AuthService {
 	return &authService{
-		repo:             repo,
-		sessionTokenRepo: sessionTokenRepo,
-		jwtService:       jwtService,
+		repo:                repo,
+		sessionTokenService: sessionTokenService,
+		jwtService:          jwtService,
 	}
 }
 
@@ -75,14 +75,7 @@ func (s *authService) Register(req *RegisterRequest, userAgent string) (*AuthRes
 	}
 
 	// Store refresh token in DB
-	sessionToken := &auth_session_tokens.AuthSessionToken{
-		UserID:    userAuth.ID,
-		JTI:       refreshTokenInfo.JTI,
-		ExpiresAt: refreshTokenInfo.ExpiresAt,
-		UserAgent: &userAgent,
-	}
-
-	if err := s.sessionTokenRepo.CreateSessionToken(sessionToken); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(userAuth.ID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -118,14 +111,7 @@ func (s *authService) Login(req *LoginRequest, userAgent string) (*AuthResponse,
 	}
 
 	// Store refresh token in DB
-	sessionToken := &auth_session_tokens.AuthSessionToken{
-		UserID:    userAuth.ID,
-		JTI:       refreshTokenInfo.JTI,
-		ExpiresAt: refreshTokenInfo.ExpiresAt,
-		UserAgent: &userAgent,
-	}
-
-	if err := s.sessionTokenRepo.CreateSessionToken(sessionToken); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(userAuth.ID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -139,7 +125,7 @@ func (s *authService) RefreshToken(req *RefreshTokenRequest, userAgent string) (
 	}
 
 	// Check if refresh token exists in DB and is not used
-	sessionToken, err := s.sessionTokenRepo.GetSessionTokenByJTI(claims.ID)
+	sessionToken, err := s.sessionTokenService.GetSessionTokenByJTI(claims.ID)
 	if err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
@@ -153,7 +139,7 @@ func (s *authService) RefreshToken(req *RefreshTokenRequest, userAgent string) (
 	}
 
 	// Mark old token as used
-	if err := s.sessionTokenRepo.MarkSessionTokenAsUsed(claims.ID); err != nil {
+	if err := s.sessionTokenService.MarkSessionTokenAsUsed(claims.ID); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -168,13 +154,7 @@ func (s *authService) RefreshToken(req *RefreshTokenRequest, userAgent string) (
 	}
 
 	// Store new refresh token in DB
-	newSessionToken := &auth_session_tokens.AuthSessionToken{
-		UserID:    claims.UserID,
-		JTI:       refreshTokenInfo.JTI,
-		ExpiresAt: refreshTokenInfo.ExpiresAt,
-		UserAgent: &userAgent,
-	}
-	if err := s.sessionTokenRepo.CreateSessionToken(newSessionToken); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(claims.UserID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -188,9 +168,10 @@ func (s *authService) Logout(req *LogoutRequest) error {
 	}
 
 	// Mark session token as used in DB
-	if err := s.sessionTokenRepo.MarkSessionTokenAsUsed(claims.ID); err != nil {
+	if err := s.sessionTokenService.MarkSessionTokenAsUsed(claims.ID); err != nil {
 		return errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
 	return nil
 }
+

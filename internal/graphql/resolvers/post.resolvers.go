@@ -149,30 +149,28 @@ func (r *queryResolver) MyPosts(ctx context.Context) ([]*model.Post, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get posts: %w", err)
 	}
-	if posts == nil {
-		return nil, fmt.Errorf("posts not found")
+	// No need to check if posts is nil here, as pg_repository.go now returns an empty slice.
+
+	var gqlPosts []*model.Post
+	for _, post := range posts {
+		var createdAt string
+		if post.CreatedAt != nil {
+			createdAt = post.CreatedAt.Format(time.RFC3339)
+		}
+		var updatedAt string
+		if post.UpdatedAt != nil {
+			updatedAt = post.UpdatedAt.Format(time.RFC3339)
+		}
+
+		gqlPosts = append(gqlPosts, &model.Post{
+			ID:               post.ID,
+			GroupID:          post.GroupID,
+			TextContent:      post.TextContent,
+			PicturesAttached: post.PicturesAttached,
+			CreatedAt:        createdAt,
+			UpdatedAt:        updatedAt,
+		})
 	}
 
-	var createdAt *string
-	if posts[0].CreatedAt != nil {
-		s := posts[0].CreatedAt.Format(time.RFC3339)
-		createdAt = &s
-	}
-
-	var updatedAt *string
-	if posts[0].UpdatedAt != nil {
-		s := posts[0].UpdatedAt.Format(time.RFC3339)
-		updatedAt = &s
-	}
-
-	return []*model.Post{
-		{
-			ID:               posts[0].ID,
-			GroupID:          posts[0].GroupID,
-			TextContent:      posts[0].TextContent,
-			PicturesAttached: posts[0].PicturesAttached,
-			CreatedAt:        *createdAt,
-			UpdatedAt:        *updatedAt,
-		},
-	}, nil
+	return gqlPosts, nil
 }

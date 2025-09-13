@@ -2,6 +2,7 @@ package posts
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -96,10 +97,13 @@ func (r *pgPostRepository) GetPostsByCreatorIDWithFields(creatorID string, field
 	err = r.db.Select(&posts, query, args...)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			fmt.Println("DEBUG: GetPostsByCreatorIDWithFields - No rows, returning empty slice")
+			return []Post{}, nil
 		}
+		fmt.Printf("DEBUG: GetPostsByCreatorIDWithFields - Error: %v\n", err)
 		return nil, err
 	}
+	fmt.Printf("DEBUG: GetPostsByCreatorIDWithFields - Posts found: %d\n", len(posts))
 	return posts, nil
 }
 

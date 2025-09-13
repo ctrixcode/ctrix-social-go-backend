@@ -8,6 +8,8 @@ type Service interface {
 	CreatePost(post *Post) error
 	GetPostByID(id string) (*Post, error)
 	GetPostByIDWithFields(id string, fields []string) (*Post, error)
+	GetPostsByCreatorID(creatorID string) ([]Post, error)
+	GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error)
 	UpdatePost(post *Post) error
 	DeletePost(id string) error
 }
@@ -60,4 +62,20 @@ func (s *service) DeletePost(id string) error {
 		return fmt.Errorf("failed to delete post: %w", err)
 	}
 	return nil
+}
+
+func (s *service) GetPostsByCreatorID(creatorID string) ([]Post, error) {
+	posts, err := s.repo.GetPostsByCreatorID(creatorID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get posts by creator ID: %w", err)
+	}
+	return posts, nil
+}
+
+func (s *service) GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error) {
+	posts, err := s.repo.GetPostsByCreatorIDWithFields(creatorID, fields)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get posts by creator ID with fields: %w", err)
+	}
+	return posts, nil
 }

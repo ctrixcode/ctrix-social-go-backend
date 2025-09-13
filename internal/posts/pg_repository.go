@@ -78,6 +78,31 @@ func (r *pgPostRepository) UpdatePost(post *Post) error {
 	return err
 }
 
+func (r *pgPostRepository) GetPostsByCreatorID(creatorID string) ([]Post, error) {
+	return r.GetPostsByCreatorIDWithFields(creatorID, []string{}) // Call the new method with empty fields
+}
+
+func (r *pgPostRepository) GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error) {
+	var posts []Post
+	builder := r.sq.Select(r.formatFields(fields)...).
+		From("posts").
+		Where(sq.Eq{"creator_id": creatorID})
+
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Select(&posts, query, args...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return posts, nil
+}
+
 func (r *pgPostRepository) DeletePost(id string) error {
 	query, args, err := r.sq.Update("posts").
 		Set("deleted_at", time.Now()).

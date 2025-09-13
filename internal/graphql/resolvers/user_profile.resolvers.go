@@ -6,22 +6,124 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
+	"time"
 
+	"github.com/lib/pq"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
+	pkgErrors "github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
 )
-
-// CreateMyUserProfile is the resolver for the createMyUserProfile field.
-func (r *mutationResolver) CreateMyUserProfile(ctx context.Context, input model.CreateUserProfileInput) (*model.UserProfile, error) {
-	panic(fmt.Errorf("not implemented: CreateMyUserProfile - createMyUserProfile"))
-}
 
 // UpdateMyUserProfile is the resolver for the updateMyUserProfile field.
 func (r *mutationResolver) UpdateMyUserProfile(ctx context.Context, input model.UpdateUserProfileInput) (*model.UserProfile, error) {
-	panic(fmt.Errorf("not implemented: UpdateMyUserProfile - updateMyUserProfile"))
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, pkgErrors.AuthenticationError(pkgErrors.ErrUnauthorized)
+	}
+
+	userProfile := &users_profile.UserProfile{
+		ID: userID,
+	}
+
+	if input.FirstName != nil {
+		userProfile.FirstName = input.FirstName
+	}
+	if input.LastName != nil {
+		userProfile.LastName = input.LastName
+	}
+	if input.ProfilePicture != nil {
+		userProfile.ProfilePicture = input.ProfilePicture
+	}
+	if input.Avatar != nil {
+		userProfile.Avatar = input.Avatar
+	}
+	if input.RelationStatus != nil {
+		userProfile.RelationStatus = input.RelationStatus
+	}
+	if input.Dob != nil {
+		t, err := time.Parse(time.RFC3339, *input.Dob)
+		if err != nil {
+			return nil, pkgErrors.BadRequestError(pkgErrors.ErrValidationFailed, "invalid Dob format")
+		}
+		userProfile.Dob = &t
+	}
+	if input.Bio != nil {
+		userProfile.Bio = input.Bio
+	}
+	if input.Gender != nil {
+		userProfile.Gender = input.Gender
+	}
+	if input.FamilyMembers != nil {
+		userProfile.FamilyMembers = pq.StringArray(input.FamilyMembers)
+	}
+	if input.Hobbies != nil {
+		userProfile.Hobbies = pq.StringArray(input.Hobbies)
+	}
+
+	err := r.UserProfileService.UpdateProfile(userProfile)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	updatedProfile, err := r.UserProfileService.GetProfileByIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+
+	var dob *string
+	if updatedProfile.Dob != nil {
+		s := updatedProfile.Dob.Format(time.RFC3339)
+		dob = &s
+	}
+
+	return &model.UserProfile{
+		FirstName:      updatedProfile.FirstName,
+		LastName:       updatedProfile.LastName,
+		ProfilePicture: updatedProfile.ProfilePicture,
+		Avatar:         updatedProfile.Avatar,
+		RelationStatus: updatedProfile.RelationStatus,
+		Dob:            dob,
+		Bio:            updatedProfile.Bio,
+		Gender:         updatedProfile.Gender,
+		FamilyMembers:  updatedProfile.FamilyMembers,
+		Hobbies:        updatedProfile.Hobbies,
+	}, nil
 }
 
 // MyUserProfile is the resolver for the myUserProfile field.
 func (r *queryResolver) MyUserProfile(ctx context.Context) (*model.UserProfile, error) {
-	panic(fmt.Errorf("not implemented: MyUserProfile - myUserProfile"))
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, pkgErrors.AuthenticationError(pkgErrors.ErrUnauthorized)
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	userProfile, err := r.UserProfileService.GetProfileByIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+	if userProfile == nil {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "user profile not found")
+	}
+
+	var dob *string
+	if userProfile.Dob != nil {
+		s := userProfile.Dob.Format(time.RFC3339)
+		dob = &s
+	}
+
+	return &model.UserProfile{
+		FirstName:      userProfile.FirstName,
+		LastName:       userProfile.LastName,
+		ProfilePicture: userProfile.ProfilePicture,
+		Avatar:         userProfile.Avatar,
+		RelationStatus: userProfile.RelationStatus,
+		Dob:            dob,
+		Bio:            userProfile.Bio,
+		Gender:         userProfile.Gender,
+		FamilyMembers:  userProfile.FamilyMembers,
+		Hobbies:        userProfile.Hobbies,
+	}, nil
 }

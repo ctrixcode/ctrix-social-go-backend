@@ -7,21 +7,137 @@ package resolvers
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/lib/pq"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/users_data"
 )
 
 // CreateMyUserData is the resolver for the createMyUserData field.
 func (r *mutationResolver) CreateMyUserData(ctx context.Context, input model.CreateUserDataInput) (*model.UserData, error) {
-	panic(fmt.Errorf("not implemented: CreateMyUserData - createMyUserData"))
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	userData := &users_data.UsersData{
+		ID: userID,
+	}
+
+	if input.LastSeen != nil {
+		t, err := time.Parse(time.RFC3339, *input.LastSeen)
+		if err != nil {
+			return nil, fmt.Errorf("invalid LastSeen format: %w", err)
+		}
+		userData.LastSeen = &t
+	}
+	if input.Followers != nil {
+		userData.Followers = pq.StringArray(input.Followers)
+	}
+	if input.Followings != nil {
+		userData.Followings = pq.StringArray(input.Followings)
+	}
+
+	err := r.UserDataService.CreateData(userData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user data: %w", err)
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	createdData, err := r.UserDataService.GetDataByIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve created user data: %w", err)
+	}
+
+	var lastSeen *string
+	if createdData.LastSeen != nil {
+		s := createdData.LastSeen.Format(time.RFC3339)
+		lastSeen = &s
+	}
+
+	return &model.UserData{
+		LastSeen:   lastSeen,
+		Followers:  createdData.Followers,
+		Followings: createdData.Followings,
+	}, nil
 }
 
 // UpdateMyUserData is the resolver for the updateMyUserData field.
 func (r *mutationResolver) UpdateMyUserData(ctx context.Context, input model.UpdateUserDataInput) (*model.UserData, error) {
-	panic(fmt.Errorf("not implemented: UpdateMyUserData - updateMyUserData"))
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	userData := &users_data.UsersData{
+		ID: userID,
+	}
+
+	if input.LastSeen != nil {
+		t, err := time.Parse(time.RFC3339, *input.LastSeen)
+		if err != nil {
+			return nil, fmt.Errorf("invalid LastSeen format: %w", err)
+		}
+		userData.LastSeen = &t
+	}
+	if input.Followers != nil {
+		userData.Followers = pq.StringArray(input.Followers)
+	}
+	if input.Followings != nil {
+		userData.Followings = pq.StringArray(input.Followings)
+	}
+
+	err := r.UserDataService.UpdateData(userData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update user data: %w", err)
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	updatedData, err := r.UserDataService.GetDataByIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve updated user data: %w", err)
+	}
+
+	var lastSeen *string
+	if updatedData.LastSeen != nil {
+		s := updatedData.LastSeen.Format(time.RFC3339)
+		lastSeen = &s
+	}
+
+	return &model.UserData{
+		LastSeen:   lastSeen,
+		Followers:  updatedData.Followers,
+		Followings: updatedData.Followings,
+	}, nil
 }
 
 // MyUserData is the resolver for the myUserData field.
 func (r *queryResolver) MyUserData(ctx context.Context) (*model.UserData, error) {
-	panic(fmt.Errorf("not implemented: MyUserData - myUserData"))
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	userData, err := r.UserDataService.GetDataByIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user data: %w", err)
+	}
+	if userData == nil {
+		return nil, fmt.Errorf("user data not found")
+	}
+
+	var lastSeen *string
+	if userData.LastSeen != nil {
+		s := userData.LastSeen.Format(time.RFC3339)
+		lastSeen = &s
+	}
+
+	return &model.UserData{
+		LastSeen:   lastSeen,
+		Followers:  userData.Followers,
+		Followings: userData.Followings,
+	}, nil
 }

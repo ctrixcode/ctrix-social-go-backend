@@ -10,6 +10,9 @@ import (
 	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/generated"
 	graphqlMiddleware "github.com/mcctrix/ctrix-social-go-backend/internal/graphql/middleware"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/resolvers"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/posts"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/users_data"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
 )
@@ -25,10 +28,25 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 	userSettingRepo := users_setting.NewRepository(db)
 	userSettingService := users_setting.NewService(userSettingRepo)
 
+	// Initialize UserDataService
+	userDataRepo := users_data.NewRepository(db)
+	userDataService := users_data.NewService(userDataRepo)
+
+	// Initialize UserProfileService
+	userProfileRepo := users_profile.NewRepository(db)
+	userProfileService := users_profile.NewService(userProfileRepo)
+
+	// Initialize PostService
+	postRepo := posts.NewRepository(db)
+	postService := posts.NewService(postRepo)
+
 	// Create a new GraphQL server
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &resolvers.Resolver{
 			UserSettingService: userSettingService,
+			UserDataService:    userDataService,
+			PostService:        postService,
+			UserProfileService: userProfileService,
 		},
 	}))
 

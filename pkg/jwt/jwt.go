@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/security"
 )
@@ -53,8 +54,9 @@ func (s *JWTService) GenerateAccessToken(userID string) (string, error) {
 	return token.SignedString(s.privateKey)
 }
 
-func (s *JWTService) GenerateRefreshToken(userID string) (string, error) {
+func (s *JWTService) GenerateRefreshToken(userID string) (string, string, time.Time, error) {
 	expirationTime := time.Now().Add(RefreshTokenDuration)
+	jti := uuid.New().String()
 	claims := &Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -64,11 +66,16 @@ func (s *JWTService) GenerateRefreshToken(userID string) (string, error) {
 			Issuer:    "ctrix-social-golang-backend",
 			Subject:   "refresh-token",
 			Audience:  []string{userID},
+			ID:        jti,
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	return token.SignedString(s.privateKey)
+	tokenString, err := token.SignedString(s.privateKey)
+	if err != nil {
+		return "", "", time.Time{}, err
+	}
+	return tokenString, jti, expirationTime, nil
 }
 
 func (s *JWTService) ValidateAccessToken(tokenString string) (*Claims, error) {

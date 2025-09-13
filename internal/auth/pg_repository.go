@@ -83,28 +83,42 @@ func (r *pgAuthRepository) DeleteUser(id string) error {
 	return err
 }
 
-func (r *pgAuthRepository) SearchUsers(username, email string) ([]*UserAuth, error) {
-	builder := r.sq.Select("id", "email", "username", "password", "created_at", "updated_at", "deleted_at").
-		From("users_auth")
-
-	if username != "" {
-		builder = builder.Where(sq.Eq{"username": username})
-	}
-	if email != "" {
-		builder = builder.Where(sq.Eq{"email": email})
-	}
-
-	query, args, err := builder.ToSql()
+func (r *pgAuthRepository) GetUserByEmail(email string) (*UserAuth, error) {
+	var user UserAuth
+	query, args, err := r.sq.Select("*").
+		From("users_auth").
+		Where(sq.Eq{"email": email}).
+		ToSql()
 	if err != nil {
 		return nil, err
 	}
 
-	var users []*UserAuth
-	// Use sqlx.Select
-	err = r.db.Select(&users, query, args...)
+	err = r.db.Get(&user, query, args...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *pgAuthRepository) GetUserByUsername(username string) (*UserAuth, error) {
+	var user UserAuth
+	query, args, err := r.sq.Select("*").
+		From("users_auth").
+		Where(sq.Eq{"username": username}).
+		ToSql()
 	if err != nil {
 		return nil, err
 	}
 
-	return users, nil
+	err = r.db.Get(&user, query, args...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
 }

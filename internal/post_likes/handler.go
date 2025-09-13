@@ -1,9 +1,9 @@
 package post_likes
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
@@ -23,41 +23,41 @@ func NewPostLikeHandler(service Service, validator *validator.Validate) *PostLik
 }
 
 func (h *PostLikeHandler) LikePost(w http.ResponseWriter, r *http.Request) error {
-	var req LikePostRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+	postID := chi.URLParam(r, "id")
+	if postID == "" {
+		return errors.BadRequestError(errors.ErrBadRequest)
 	}
 
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
-	}
-
-	postLike := LikePostRequestToPostLike(&req)
-
-	if err := h.service.LikePost(postLike); err != nil {
+	if err := h.service.LikePost(userID, postID); err != nil {
 		if _, ok := err.(*errors.APIError); ok {
 			return err
 		}
 		return errors.InternalServerError(errors.FailedToLikePost, err.Error())
 	}
 
-	response.JSONSuccess(w, PostLikeToPostLikeResponse(postLike), http.StatusCreated, "Post liked successfully")
+	response.JSONSuccess(w, interface{}(nil), http.StatusCreated, "Post liked successfully")
 	return nil
 }
 
 func (h *PostLikeHandler) UnlikePost(w http.ResponseWriter, r *http.Request) error {
-	var req UnlikePostRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
+
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
 	}
 
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
+	postID := chi.URLParam(r, "id")
+	if postID == "" {
+		return errors.BadRequestError(errors.ErrBadRequest)
 	}
 
-	if err := h.service.UnlikePost(req.UserID, req.PostID); err != nil {
-		if err.Error() == "post not liked by this user" {
-			return errors.NotFoundError(errors.PostNotLiked, err.Error())
+	if err := h.service.UnlikePost(userID, postID); err != nil {
+		if _, ok := err.(*errors.APIError); ok {
+			return err
 		}
 		return errors.InternalServerError(errors.FailedToUnlikePost, err.Error())
 	}

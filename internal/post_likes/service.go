@@ -5,9 +5,8 @@ import (
 )
 
 type Service interface {
-	LikePost(postLike *PostLike) error
+	LikePost(userID, postID string) error
 	UnlikePost(userID, postID string) error
-	GetPostLike(userID, postID string) (*PostLike, error)
 }
 
 type service struct {
@@ -20,14 +19,19 @@ func NewService(repo PostLikeRepository) Service {
 	}
 }
 
-func (s *service) LikePost(postLike *PostLike) error {
+func (s *service) LikePost(userID, postID string) error {
 	// Check if the post is already liked by the user
-	existingLike, err := s.repo.GetPostLike(postLike.UserID, postLike.PostID)
+	existingLike, err := s.repo.GetPostLike(userID, postID)
 	if err != nil {
 		return errors.InternalServerError(errors.ErrInternalServerError)
 	}
 	if existingLike != nil {
 		return errors.BadRequestError(errors.PostAlreadyLiked)
+	}
+
+	var postLike *PostLike = &PostLike{
+		UserID: userID,
+		PostID: postID,
 	}
 
 	err = s.repo.LikePost(postLike)
@@ -41,7 +45,7 @@ func (s *service) UnlikePost(userID, postID string) error {
 	// Check if the post is actually liked by the user
 	existingLike, err := s.repo.GetPostLike(userID, postID)
 	if err != nil {
-		return errors.InternalServerError(errors.ErrInternalServerError)
+		return errors.BadRequestError(errors.PostNotLiked)
 	}
 	if existingLike == nil {
 		return errors.BadRequestError(errors.PostNotLiked)
@@ -52,12 +56,4 @@ func (s *service) UnlikePost(userID, postID string) error {
 		return errors.InternalServerError(errors.FailedToUnlikePost)
 	}
 	return nil
-}
-
-func (s *service) GetPostLike(userID, postID string) (*PostLike, error) {
-	postLike, err := s.repo.GetPostLike(userID, postID)
-	if err != nil {
-		return nil, errors.InternalServerError(errors.ErrInternalServerError)
-	}
-	return postLike, nil
 }

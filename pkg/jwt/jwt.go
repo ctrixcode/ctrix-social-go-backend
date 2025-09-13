@@ -1,6 +1,8 @@
 package jwt
 
 import (
+	"crypto/ecdsa"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -8,40 +10,95 @@ import (
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/security"
 )
 
-/*This Function takes User model and return a raw jwt token in string format*/
-func GenerateJwtToken(userId string) (string, error) {
+const (
+	AccessTokenDuration  = time.Minute * 15
+	RefreshTokenDuration = time.Hour * 24 * 7
+)
 
-	Exp_Time := time.Now().Add(time.Hour * 24 * 365).Unix()
-
-	claim := jwt.MapClaims{
-		"iss": "ctrix-social-golang-backend",
-		"iat": time.Now().Unix(),
-		"sub": "user-auth",
-		"aud": userId,
-		"exp": Exp_Time,
-	}
-
-	// Create JWT Token with claim
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
-	// Sign the Token
-	stringToken, err := jwtToken.SignedString(security.GetEcdsaPrivateKey())
-	if err != nil {
-		return "", err
-	}
-
-	return stringToken, nil
+type Claims struct {
+	UserID string `json:"userId"`
+	jwt.RegisteredClaims
 }
 
-/* This Function is used to get Jwt Token from a raw String */
-func GetJwtToken(token string) (*jwt.Token, error) {
-	return jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return &security.GetEcdsaPrivateKey().PublicKey, nil
+type JWTService struct {
+	privateKey *ecdsa.PrivateKey
+	publicKey  *ecdsa.PublicKey
+}
+
+func NewJWTService() (*JWTService, error) {
+	privateKey := security.GetEcdsaPrivateKey()
+	publicKey := &privateKey.PublicKey
+
+	return &JWTService{
+		privateKey: privateKey,
+		publicKey:  publicKey,
+	}, nil
+}
+
+func (s *JWTService) GenerateAccessToken(userID string) (string, error) {
+	expirationTime := time.Now().Add(AccessTokenDuration)
+	claims := &Claims{
+		UserID: userID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			Issuer:    "ctrix-social-golang-backend",
+			Subject:   "access-token",
+			Audience:  []string{userID},
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	return token.SignedString(s.privateKey)
+}
+
+func (s *JWTService) GenerateRefreshToken(userID string) (string, error) {
+	expirationTime := time.Now().Add(RefreshTokenDuration)
+	claims := &Claims{
+		UserID: userID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			Issuer:    "ctrix-social-golang-backend",
+			Subject:   "refresh-token",
+			Audience:  []string{userID},
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	return token.SignedString(s.privateKey)
+}
+
+func (s *JWTService) ValidateAccessToken(tokenString string) (*Claims, error) {
+	return s.validateToken(tokenString, "access-token")
+}
+
+func (s *JWTService) ValidateRefreshToken(tokenString string) (*Claims, error) {
+	return s.validateToken(tokenString, "refresh-token")
+}
+
+func (s *JWTService) validateToken(tokenString, expectedSubject string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return s.publicKey, nil
 	})
-}
 
-func GetJwtTokenField(token *jwt.Token, claimName string) string {
-	if claim, ok := token.Claims.(jwt.MapClaims); ok {
-		return claim[claimName].(string)
+	if err != nil {
+		return nil, err
 	}
-	return ""
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	if claims.Subject != expectedSubject {
+		return nil, fmt.Errorf("invalid token subject: %s", claims.Subject)
+	}
+
+	return claims, nil
 }

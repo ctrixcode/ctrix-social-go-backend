@@ -54,7 +54,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.CreatePos
 
 	return &model.Post{
 		ID:               createdPost.ID,
-		CreatorID:        createdPost.CreatorID,
 		GroupID:          createdPost.GroupID,
 		TextContent:      createdPost.TextContent,
 		PicturesAttached: createdPost.PicturesAttached,
@@ -99,7 +98,6 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input mode
 
 	return &model.Post{
 		ID:               updatedPost.ID,
-		CreatorID:        updatedPost.CreatorID,
 		GroupID:          updatedPost.GroupID,
 		TextContent:      updatedPost.TextContent,
 		PicturesAttached: updatedPost.PicturesAttached,
@@ -131,7 +129,6 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error
 
 	return &model.Post{
 		ID:               post.ID,
-		CreatorID:        post.CreatorID,
 		GroupID:          post.GroupID,
 		TextContent:      post.TextContent,
 		PicturesAttached: post.PicturesAttached,
@@ -171,7 +168,6 @@ func (r *queryResolver) MyPosts(ctx context.Context) ([]*model.Post, error) {
 	return []*model.Post{
 		{
 			ID:               posts[0].ID,
-			CreatorID:        posts[0].CreatorID,
 			GroupID:          posts[0].GroupID,
 			TextContent:      posts[0].TextContent,
 			PicturesAttached: posts[0].PicturesAttached,

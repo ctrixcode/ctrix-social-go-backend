@@ -53,7 +53,6 @@ type ComplexityRoot struct {
 
 	Post struct {
 		CreatedAt        func(childComplexity int) int
-		CreatorID        func(childComplexity int) int
 		GroupID          func(childComplexity int) int
 		ID               func(childComplexity int) int
 		PicturesAttached func(childComplexity int) int
@@ -206,13 +205,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Post.CreatedAt(childComplexity), true
-
-	case "Post.creatorID":
-		if e.complexity.Post.CreatorID == nil {
-			break
-		}
-
-		return e.complexity.Post.CreatorID(childComplexity), true
 
 	case "Post.groupID":
 		if e.complexity.Post.GroupID == nil {
@@ -528,7 +520,6 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 var sources = []*ast.Source{
 	{Name: "../schema/post.graphqls", Input: `type Post {
   id: ID!
-  creatorID: ID!
   groupID: ID
   textContent: String
   picturesAttached: [String!]
@@ -537,7 +528,6 @@ var sources = []*ast.Source{
 }
 
 input CreatePostInput {
-  creatorID: ID!
   groupID: ID
   textContent: String
   picturesAttached: [String!]

@@ -247,8 +247,6 @@ func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Post_id(ctx, field)
-			case "creatorID":
-				return ec.fieldContext_Post_creatorID(ctx, field)
 			case "groupID":
 				return ec.fieldContext_Post_groupID(ctx, field)
 			case "textContent":
@@ -318,8 +316,6 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Post_id(ctx, field)
-			case "creatorID":
-				return ec.fieldContext_Post_creatorID(ctx, field)
 			case "groupID":
 				return ec.fieldContext_Post_groupID(ctx, field)
 			case "textContent":
@@ -698,8 +694,6 @@ func (ec *executionContext) fieldContext_Query_post(ctx context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Post_id(ctx, field)
-			case "creatorID":
-				return ec.fieldContext_Post_creatorID(ctx, field)
 			case "groupID":
 				return ec.fieldContext_Post_groupID(ctx, field)
 			case "textContent":
@@ -766,8 +760,6 @@ func (ec *executionContext) fieldContext_Query_myPosts(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Post_id(ctx, field)
-			case "creatorID":
-				return ec.fieldContext_Post_creatorID(ctx, field)
 			case "groupID":
 				return ec.fieldContext_Post_groupID(ctx, field)
 			case "textContent":

@@ -3,7 +3,6 @@
 package model
 
 type CreatePostInput struct {
-	CreatorID        string   `json:"creatorID"`
 	GroupID          *string  `json:"groupID,omitempty"`
 	TextContent      *string  `json:"textContent,omitempty"`
 	PicturesAttached []string `json:"picturesAttached,omitempty"`
@@ -20,7 +19,6 @@ type Mutation struct {
 
 type Post struct {
 	ID               string   `json:"id"`
-	CreatorID        string   `json:"creatorID"`
 	GroupID          *string  `json:"groupID,omitempty"`
 	TextContent      *string  `json:"textContent,omitempty"`
 	PicturesAttached []string `json:"picturesAttached,omitempty"`

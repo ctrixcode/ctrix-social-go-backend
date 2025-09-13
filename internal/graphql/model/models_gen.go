@@ -2,10 +2,36 @@
 
 package model
 
+type CreateUserProfileInput struct {
+	FirstName      *string  `json:"firstName,omitempty"`
+	LastName       *string  `json:"lastName,omitempty"`
+	ProfilePicture *string  `json:"profilePicture,omitempty"`
+	Avatar         *string  `json:"avatar,omitempty"`
+	RelationStatus *string  `json:"relationStatus,omitempty"`
+	Dob            *string  `json:"dob,omitempty"`
+	Bio            *string  `json:"bio,omitempty"`
+	Gender         *string  `json:"gender,omitempty"`
+	FamilyMembers  []string `json:"familyMembers,omitempty"`
+	Hobbies        []string `json:"hobbies,omitempty"`
+}
+
 type Mutation struct {
 }
 
 type Query struct {
+}
+
+type UpdateUserProfileInput struct {
+	FirstName      *string  `json:"firstName,omitempty"`
+	LastName       *string  `json:"lastName,omitempty"`
+	ProfilePicture *string  `json:"profilePicture,omitempty"`
+	Avatar         *string  `json:"avatar,omitempty"`
+	RelationStatus *string  `json:"relationStatus,omitempty"`
+	Dob            *string  `json:"dob,omitempty"`
+	Bio            *string  `json:"bio,omitempty"`
+	Gender         *string  `json:"gender,omitempty"`
+	FamilyMembers  []string `json:"familyMembers,omitempty"`
+	Hobbies        []string `json:"hobbies,omitempty"`
 }
 
 type UpdateUserSettingInput struct {
@@ -13,6 +39,19 @@ type UpdateUserSettingInput struct {
 	HidePost   []string `json:"hidePost,omitempty"`
 	HideStory  []string `json:"hideStory,omitempty"`
 	ShowOnline *bool    `json:"showOnline,omitempty"`
+}
+
+type UserProfile struct {
+	FirstName      *string  `json:"firstName,omitempty"`
+	LastName       *string  `json:"lastName,omitempty"`
+	ProfilePicture *string  `json:"profilePicture,omitempty"`
+	Avatar         *string  `json:"avatar,omitempty"`
+	RelationStatus *string  `json:"relationStatus,omitempty"`
+	Dob            *string  `json:"dob,omitempty"`
+	Bio            *string  `json:"bio,omitempty"`
+	Gender         *string  `json:"gender,omitempty"`
+	FamilyMembers  []string `json:"familyMembers,omitempty"`
+	Hobbies        []string `json:"hobbies,omitempty"`
 }
 
 type UserSetting struct {

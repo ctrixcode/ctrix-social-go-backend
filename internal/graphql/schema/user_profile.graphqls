@@ -1,0 +1,47 @@
+type UserProfile {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+input CreateUserProfileInput {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+input UpdateUserProfileInput {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+extend type Query {
+  myUserProfile: UserProfile
+}
+
+extend type Mutation {
+  createMyUserProfile(input: CreateUserProfileInput!): UserProfile!
+  updateMyUserProfile(input: UpdateUserProfileInput!): UserProfile!
+}

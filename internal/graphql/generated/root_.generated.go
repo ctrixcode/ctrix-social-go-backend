@@ -42,13 +42,29 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
+		CreateMyUserProfile func(childComplexity int, input model.CreateUserProfileInput) int
 		SayHello            func(childComplexity int, name string) int
+		UpdateMyUserProfile func(childComplexity int, input model.UpdateUserProfileInput) int
 		UpdateMyUserSetting func(childComplexity int, input model.UpdateUserSettingInput) int
 	}
 
 	Query struct {
 		Hello         func(childComplexity int) int
+		MyUserProfile func(childComplexity int) int
 		MyUserSetting func(childComplexity int) int
+	}
+
+	UserProfile struct {
+		Avatar         func(childComplexity int) int
+		Bio            func(childComplexity int) int
+		Dob            func(childComplexity int) int
+		FamilyMembers  func(childComplexity int) int
+		FirstName      func(childComplexity int) int
+		Gender         func(childComplexity int) int
+		Hobbies        func(childComplexity int) int
+		LastName       func(childComplexity int) int
+		ProfilePicture func(childComplexity int) int
+		RelationStatus func(childComplexity int) int
 	}
 
 	UserSetting struct {
@@ -78,6 +94,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Mutation.createMyUserProfile":
+		if e.complexity.Mutation.CreateMyUserProfile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createMyUserProfile_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateMyUserProfile(childComplexity, args["input"].(model.CreateUserProfileInput)), true
+
 	case "Mutation.sayHello":
 		if e.complexity.Mutation.SayHello == nil {
 			break
@@ -89,6 +117,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.SayHello(childComplexity, args["name"].(string)), true
+
+	case "Mutation.updateMyUserProfile":
+		if e.complexity.Mutation.UpdateMyUserProfile == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMyUserProfile_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMyUserProfile(childComplexity, args["input"].(model.UpdateUserProfileInput)), true
 
 	case "Mutation.updateMyUserSetting":
 		if e.complexity.Mutation.UpdateMyUserSetting == nil {
@@ -109,12 +149,89 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Hello(childComplexity), true
 
+	case "Query.myUserProfile":
+		if e.complexity.Query.MyUserProfile == nil {
+			break
+		}
+
+		return e.complexity.Query.MyUserProfile(childComplexity), true
+
 	case "Query.myUserSetting":
 		if e.complexity.Query.MyUserSetting == nil {
 			break
 		}
 
 		return e.complexity.Query.MyUserSetting(childComplexity), true
+
+	case "UserProfile.avatar":
+		if e.complexity.UserProfile.Avatar == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.Avatar(childComplexity), true
+
+	case "UserProfile.bio":
+		if e.complexity.UserProfile.Bio == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.Bio(childComplexity), true
+
+	case "UserProfile.dob":
+		if e.complexity.UserProfile.Dob == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.Dob(childComplexity), true
+
+	case "UserProfile.familyMembers":
+		if e.complexity.UserProfile.FamilyMembers == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.FamilyMembers(childComplexity), true
+
+	case "UserProfile.firstName":
+		if e.complexity.UserProfile.FirstName == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.FirstName(childComplexity), true
+
+	case "UserProfile.gender":
+		if e.complexity.UserProfile.Gender == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.Gender(childComplexity), true
+
+	case "UserProfile.hobbies":
+		if e.complexity.UserProfile.Hobbies == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.Hobbies(childComplexity), true
+
+	case "UserProfile.lastName":
+		if e.complexity.UserProfile.LastName == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.LastName(childComplexity), true
+
+	case "UserProfile.profilePicture":
+		if e.complexity.UserProfile.ProfilePicture == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.ProfilePicture(childComplexity), true
+
+	case "UserProfile.relationStatus":
+		if e.complexity.UserProfile.RelationStatus == nil {
+			break
+		}
+
+		return e.complexity.UserProfile.RelationStatus(childComplexity), true
 
 	case "UserSetting.blockUser":
 		if e.complexity.UserSetting.BlockUser == nil {
@@ -152,6 +269,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateUserProfileInput,
+		ec.unmarshalInputUpdateUserProfileInput,
 		ec.unmarshalInputUpdateUserSettingInput,
 	)
 	first := true
@@ -256,6 +375,54 @@ var sources = []*ast.Source{
 
 type Mutation {
   sayHello(name: String!): String!
+}
+`, BuiltIn: false},
+	{Name: "../schema/user_profile.graphqls", Input: `type UserProfile {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+input CreateUserProfileInput {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+input UpdateUserProfileInput {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+extend type Query {
+  myUserProfile: UserProfile
+}
+
+extend type Mutation {
+  createMyUserProfile(input: CreateUserProfileInput!): UserProfile!
+  updateMyUserProfile(input: UpdateUserProfileInput!): UserProfile!
 }
 `, BuiltIn: false},
 	{Name: "../schema/user_setting.graphqls", Input: `type UserSetting {

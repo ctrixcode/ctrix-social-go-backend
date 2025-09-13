@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"os"
 
 	"github.com/go-playground/validator/v10"
 
@@ -77,12 +76,12 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
-	refreshToken, err := h.jwtService.GenerateRefreshToken(userAuth.ID)
+	refreshTokenInfo, err := h.jwtService.GenerateRefreshToken(userAuth.ID)
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
 
-	res := ToAuthResponse(accessToken, refreshToken)
+	res := ToAuthResponse(accessToken, refreshTokenInfo.TokenString)
 	response.JSONSuccess(w, res, http.StatusOK, "User registered successfully")
 	return nil
 }
@@ -108,10 +107,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) error {
 		return errors.AuthenticationError(errors.ErrInvalidCredentials)
 	}
 
-	if os.Getenv("APP_ENV") == "production" {
-		if !security.CheckPasswordHash(req.Password, userAuth.Password) {
-			return errors.AuthenticationError(errors.ErrInvalidCredentials)
-		}
+	if !security.CheckPasswordHash(req.Password, userAuth.Password) {
+		return errors.AuthenticationError(errors.ErrInvalidCredentials)
 	}
 
 	// Generate tokens
@@ -119,12 +116,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
-	refreshToken, err := h.jwtService.GenerateRefreshToken(userAuth.ID)
+	refreshTokenInfo, err := h.jwtService.GenerateRefreshToken(userAuth.ID)
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
 
-	res := ToAuthResponse(accessToken, refreshToken)
+	res := ToAuthResponse(accessToken, refreshTokenInfo.TokenString)
 	response.JSONSuccess(w, res, http.StatusOK, "Logged in successfully")
 	return nil
 }
@@ -149,12 +146,12 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
-	refreshToken, err := h.jwtService.GenerateRefreshToken(claims.UserID)
+	refreshTokenInfo, err := h.jwtService.GenerateRefreshToken(claims.UserID)
 	if err != nil {
 		return errors.InternalServerError(errors.ErrFailedToGenerateToken, err.Error())
 	}
 
-	res := ToAuthResponse(accessToken, refreshToken)
+	res := ToAuthResponse(accessToken, refreshTokenInfo.TokenString)
 	response.JSONSuccess(w, res, http.StatusOK, "Tokens refreshed successfully")
 	return nil
 }

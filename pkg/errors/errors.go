@@ -13,16 +13,11 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("API Error: [Code: %s, Status: %d] %s", e.Type.Code, e.StatusCode, e.GetMessage())
+	return fmt.Sprintf("API Error: [Code: %s, Status: %d] %s", e.Type.Code, e.StatusCode, e.Type.Message)
 }
 
+// GetMessage retrieves the error message from the ErrorType.
 func (e *APIError) GetMessage() string {
-	if e.Details != nil {
-		if msg, ok := e.Details.(string); ok {
-			return msg
-		}
-	}
-
 	return e.Type.Message
 }
 

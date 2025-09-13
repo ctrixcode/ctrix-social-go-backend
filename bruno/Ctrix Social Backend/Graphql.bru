@@ -1,0 +1,22 @@
+meta {
+  name: Graphql
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:4000/query
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  query {
+    hello
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+}

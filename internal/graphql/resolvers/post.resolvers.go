@@ -139,3 +139,44 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*model.Post, error
 		UpdatedAt:        post.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
+
+// MyPosts is the resolver for the myPosts field.
+func (r *queryResolver) MyPosts(ctx context.Context) ([]*model.Post, error) {
+	userID, ok := ctx.Value("user_id").(string)
+	if !ok {
+		return nil, fmt.Errorf("unauthenticated")
+	}
+
+	requestedFields := helpers.GetRequestedFields(ctx)
+	posts, err := r.PostService.GetPostsByCreatorIDWithFields(userID, requestedFields)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get posts: %w", err)
+	}
+	if posts == nil {
+		return nil, fmt.Errorf("posts not found")
+	}
+
+	var createdAt *string
+	if posts[0].CreatedAt != nil {
+		s := posts[0].CreatedAt.Format(time.RFC3339)
+		createdAt = &s
+	}
+
+	var updatedAt *string
+	if posts[0].UpdatedAt != nil {
+		s := posts[0].UpdatedAt.Format(time.RFC3339)
+		updatedAt = &s
+	}
+
+	return []*model.Post{
+		{
+			ID:               posts[0].ID,
+			CreatorID:        posts[0].CreatorID,
+			GroupID:          posts[0].GroupID,
+			TextContent:      posts[0].TextContent,
+			PicturesAttached: posts[0].PicturesAttached,
+			CreatedAt:        *createdAt,
+			UpdatedAt:        *updatedAt,
+		},
+	}, nil
+}

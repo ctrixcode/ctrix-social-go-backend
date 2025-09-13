@@ -63,6 +63,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Hello         func(childComplexity int) int
+		MyPosts       func(childComplexity int) int
 		MyUserData    func(childComplexity int) int
 		MyUserProfile func(childComplexity int) int
 		MyUserSetting func(childComplexity int) int
@@ -254,6 +255,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Hello(childComplexity), true
+
+	case "Query.myPosts":
+		if e.complexity.Query.MyPosts == nil {
+			break
+		}
+
+		return e.complexity.Query.MyPosts(childComplexity), true
 
 	case "Query.myUserData":
 		if e.complexity.Query.MyUserData == nil {
@@ -543,6 +551,7 @@ input UpdatePostInput {
 
 extend type Query {
   post(id: ID!): Post
+  myPosts: [Post!]
 }
 
 extend type Mutation {

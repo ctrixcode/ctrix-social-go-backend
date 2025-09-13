@@ -2,12 +2,6 @@
 
 package model
 
-type CreateUserDataInput struct {
-	LastSeen   *string  `json:"lastSeen,omitempty"`
-	Followers  []string `json:"followers,omitempty"`
-	Followings []string `json:"followings,omitempty"`
-}
-
 type Mutation struct {
 }
 

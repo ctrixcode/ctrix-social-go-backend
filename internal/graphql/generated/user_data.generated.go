@@ -154,47 +154,6 @@ func (ec *executionContext) fieldContext_UserData_followings(_ context.Context, 
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateUserDataInput(ctx context.Context, obj any) (model.CreateUserDataInput, error) {
-	var it model.CreateUserDataInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"lastSeen", "followers", "followings"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "lastSeen":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeen"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.LastSeen = data
-		case "followers":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("followers"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Followers = data
-		case "followings":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("followings"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Followings = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateUserDataInput(ctx context.Context, obj any) (model.UpdateUserDataInput, error) {
 	var it model.UpdateUserDataInput
 	asMap := map[string]any{}
@@ -287,11 +246,6 @@ func (ec *executionContext) _UserData(ctx context.Context, sel ast.SelectionSet,
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
-
-func (ec *executionContext) unmarshalNCreateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserDataInput(ctx context.Context, v any) (model.CreateUserDataInput, error) {
-	res, err := ec.unmarshalInputCreateUserDataInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
 
 func (ec *executionContext) unmarshalNUpdateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserDataInput(ctx context.Context, v any) (model.UpdateUserDataInput, error) {
 	res, err := ec.unmarshalInputUpdateUserDataInput(ctx, v)

@@ -15,11 +15,6 @@ import (
 	"github.com/lib/pq"
 )
 
-// CreateMyUserData is the resolver for the createMyUserData field.
-func (r *mutationResolver) CreateMyUserData(ctx context.Context, input model.CreateUserDataInput) (*model.UserData, error) {
-	panic(fmt.Errorf("not implemented: CreateMyUserData - createMyUserData"))
-}
-
 // UpdateMyUserData is the resolver for the updateMyUserData field.
 func (r *mutationResolver) UpdateMyUserData(ctx context.Context, input model.UpdateUserDataInput) (*model.UserData, error) {
 	userID, ok := ctx.Value("user_id").(string)

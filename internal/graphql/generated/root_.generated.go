@@ -42,7 +42,6 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateMyUserData    func(childComplexity int, input model.CreateUserDataInput) int
 		SayHello            func(childComplexity int, name string) int
 		UpdateMyUserData    func(childComplexity int, input model.UpdateUserDataInput) int
 		UpdateMyUserProfile func(childComplexity int, input model.UpdateUserProfileInput) int
@@ -112,18 +111,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "Mutation.createMyUserData":
-		if e.complexity.Mutation.CreateMyUserData == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createMyUserData_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateMyUserData(childComplexity, args["input"].(model.CreateUserDataInput)), true
 
 	case "Mutation.sayHello":
 		if e.complexity.Mutation.SayHello == nil {
@@ -389,7 +376,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreateUserDataInput,
 		ec.unmarshalInputUpdateUserDataInput,
 		ec.unmarshalInputUpdateUserProfileInput,
 		ec.unmarshalInputUpdateUserSettingInput,
@@ -518,12 +504,6 @@ type Mutation {
   followings: [String!]
 }
 
-input CreateUserDataInput {
-  lastSeen: String
-  followers: [String!]
-  followings: [String!]
-}
-
 input UpdateUserDataInput {
   lastSeen: String
   followers: [String!]
@@ -535,7 +515,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  createMyUserData(input: CreateUserDataInput!): UserData!
   updateMyUserData(input: UpdateUserDataInput!): UserData!
 }
 `, BuiltIn: false},

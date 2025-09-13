@@ -4,12 +4,6 @@ type UserData {
   followings: [String!]
 }
 
-input CreateUserDataInput {
-  lastSeen: String
-  followers: [String!]
-  followings: [String!]
-}
-
 input UpdateUserDataInput {
   lastSeen: String
   followers: [String!]
@@ -21,6 +15,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  createMyUserData(input: CreateUserDataInput!): UserData!
   updateMyUserData(input: UpdateUserDataInput!): UserData!
 }

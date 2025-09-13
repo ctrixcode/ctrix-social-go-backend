@@ -4,6 +4,8 @@ go 1.23.0
 
 toolchain go1.24.0
 
+replace github.com/mcctrix/ctrix-social-go-backend => ./
+
 require (
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/golang-jwt/jwt/v5 v5.2.2
@@ -13,6 +15,7 @@ require (
 require (
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
+	github.com/vektah/gqlparser/v2 v2.5.30
 	golang.org/x/crypto v0.40.0
 )
 
@@ -28,9 +31,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
-	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/urfave/cli/v2 v2.27.7 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.30 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/mod v0.26.0 // indirect
 	golang.org/x/net v0.42.0 // indirect

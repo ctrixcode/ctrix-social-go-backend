@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/app" // New import for the app package
+	"github.com/mcctrix/ctrix-social-go-backend/internal/app"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 	}
 
 	application.SetupRoutes()
+	graphql.NewGraphQLServer(application.Router)
 
 	if err := application.Serve(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)

@@ -21,8 +21,8 @@ func NewRepository(db *sqlx.DB) AuthSessionTokenRepository {
 
 func (r *pgAuthSessionTokenRepository) CreateSessionToken(token *AuthSessionToken) error {
 	query, args, err := r.sq.Insert("auth_session_tokens").
-		Columns("user_id", "jti", "expires_at", "is_used", "user_agent").
-		Values(token.UserID, token.JTI, token.ExpiresAt, token.IsUsed, token.UserAgent).
+		Columns("user_id", "jti", "expires_at", "user_agent").
+		Values(token.UserID, token.JTI, token.ExpiresAt, token.UserAgent).
 		ToSql()
 	if err != nil {
 		return err
@@ -77,8 +77,9 @@ func (r *pgAuthSessionTokenRepository) DeleteSessionToken(jti string) error {
 	return err
 }
 
-func (r *pgAuthSessionTokenRepository) DeleteAllSessionTokensForUser(userID string) error {
-	query, args, err := r.sq.Delete("auth_session_tokens").
+func (r *pgAuthSessionTokenRepository) markAllSessionTokensUsedForUser(userID string) error {
+	query, args, err := r.sq.Update("auth_session_tokens").
+		Set("is_used", true).
 		Where(sq.Eq{"user_id": userID}).
 		ToSql()
 	if err != nil {

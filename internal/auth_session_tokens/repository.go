@@ -5,5 +5,5 @@ type AuthSessionTokenRepository interface {
 	GetSessionTokenByJTI(jti string) (*AuthSessionToken, error)
 	MarkSessionTokenAsUsed(jti string) error
 	DeleteSessionToken(jti string) error
-	DeleteAllSessionTokensForUser(userID string) error
+	markAllSessionTokensUsedForUser(userID string) error
 }

@@ -41,7 +41,7 @@ type QueryResolver interface {
 func (ec *executionContext) field_Mutation_createMyUserData_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateUserDataInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserDataInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserDataInput)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (ec *executionContext) field_Mutation_createMyUserData_args(ctx context.Con
 func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreatePostInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreatePostInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreatePostInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreatePostInput)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (ec *executionContext) field_Mutation_sayHello_args(ctx context.Context, ra
 func (ec *executionContext) field_Mutation_updateMyUserData_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserDataInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserDataInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserDataInput)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (ec *executionContext) field_Mutation_updateMyUserData_args(ctx context.Con
 func (ec *executionContext) field_Mutation_updateMyUserProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserProfileInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserProfileInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserProfileInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserProfileInput)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (ec *executionContext) field_Mutation_updateMyUserProfile_args(ctx context.
 func (ec *executionContext) field_Mutation_updateMyUserSetting_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserSettingInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserSettingInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateUserSettingInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserSettingInput)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdatePostInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdatePostInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdatePostInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdatePostInput)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +233,7 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Post)
 	fc.Result = res
-	return ec.marshalNPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
+	return ec.marshalNPost2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -304,7 +304,7 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Post)
 	fc.Result = res
-	return ec.marshalNPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
+	return ec.marshalNPost2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -375,7 +375,7 @@ func (ec *executionContext) _Mutation_createMyUserData(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.UserData)
 	fc.Result = res
-	return ec.marshalNUserData2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
+	return ec.marshalNUserData2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createMyUserData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -438,7 +438,7 @@ func (ec *executionContext) _Mutation_updateMyUserData(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.UserData)
 	fc.Result = res
-	return ec.marshalNUserData2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
+	return ec.marshalNUserData2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateMyUserData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -501,7 +501,7 @@ func (ec *executionContext) _Mutation_updateMyUserProfile(ctx context.Context, f
 	}
 	res := resTmp.(*model.UserProfile)
 	fc.Result = res
-	return ec.marshalNUserProfile2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx, field.Selections, res)
+	return ec.marshalNUserProfile2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateMyUserProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -578,7 +578,7 @@ func (ec *executionContext) _Mutation_updateMyUserSetting(ctx context.Context, f
 	}
 	res := resTmp.(*model.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateMyUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -684,7 +684,7 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.Post)
 	fc.Result = res
-	return ec.marshalOPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
+	return ec.marshalOPost2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_post(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -752,7 +752,7 @@ func (ec *executionContext) _Query_myUserData(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.UserData)
 	fc.Result = res
-	return ec.marshalOUserData2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
+	return ec.marshalOUserData2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_myUserData(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -801,7 +801,7 @@ func (ec *executionContext) _Query_myUserProfile(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.UserProfile)
 	fc.Result = res
-	return ec.marshalOUserProfile2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx, field.Selections, res)
+	return ec.marshalOUserProfile2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_myUserProfile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -867,7 +867,7 @@ func (ec *executionContext) _Query_myUserSetting(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_myUserSetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {

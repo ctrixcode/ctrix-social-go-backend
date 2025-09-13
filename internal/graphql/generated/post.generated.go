@@ -491,16 +491,16 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNCreatePostInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreatePostInput(ctx context.Context, v any) (model.CreatePostInput, error) {
+func (ec *executionContext) unmarshalNCreatePostInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreatePostInput(ctx context.Context, v any) (model.CreatePostInput, error) {
 	res, err := ec.unmarshalInputCreatePostInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPost2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v model.Post) graphql.Marshaler {
 	return ec._Post(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -510,12 +510,12 @@ func (ec *executionContext) marshalNPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsoc
 	return ec._Post(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdatePostInput(ctx context.Context, v any) (model.UpdatePostInput, error) {
+func (ec *executionContext) unmarshalNUpdatePostInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdatePostInput(ctx context.Context, v any) (model.UpdatePostInput, error) {
 	res, err := ec.unmarshalInputUpdatePostInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOPost2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalOPost2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

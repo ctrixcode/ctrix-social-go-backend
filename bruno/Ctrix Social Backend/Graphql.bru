@@ -12,10 +12,20 @@ post {
 
 body:graphql {
   query {
+    myUserProfile {
+      firstName
+      lastName
+    }
+    myUserData {
+      followers
+      followings
+    }
     myUserSetting {
       showOnline
+      blockUser
     }
   }
+  
 }
 
 settings {

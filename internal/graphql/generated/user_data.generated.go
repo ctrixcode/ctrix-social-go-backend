@@ -288,21 +288,21 @@ func (ec *executionContext) _UserData(ctx context.Context, sel ast.SelectionSet,
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNCreateUserDataInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserDataInput(ctx context.Context, v any) (model.CreateUserDataInput, error) {
+func (ec *executionContext) unmarshalNCreateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserDataInput(ctx context.Context, v any) (model.CreateUserDataInput, error) {
 	res, err := ec.unmarshalInputCreateUserDataInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateUserDataInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserDataInput(ctx context.Context, v any) (model.UpdateUserDataInput, error) {
+func (ec *executionContext) unmarshalNUpdateUserDataInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserDataInput(ctx context.Context, v any) (model.UpdateUserDataInput, error) {
 	res, err := ec.unmarshalInputUpdateUserDataInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserData2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v model.UserData) graphql.Marshaler {
+func (ec *executionContext) marshalNUserData2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v model.UserData) graphql.Marshaler {
 	return ec._UserData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserData2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v *model.UserData) graphql.Marshaler {
+func (ec *executionContext) marshalNUserData2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v *model.UserData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -312,7 +312,7 @@ func (ec *executionContext) marshalNUserData2ᚖgithubᚗcomᚋmcctrixᚋctrix�
 	return ec._UserData(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUserData2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v *model.UserData) graphql.Marshaler {
+func (ec *executionContext) marshalOUserData2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserData(ctx context.Context, sel ast.SelectionSet, v *model.UserData) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -597,16 +597,16 @@ func (ec *executionContext) _UserProfile(ctx context.Context, sel ast.SelectionS
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNUpdateUserProfileInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserProfileInput(ctx context.Context, v any) (model.UpdateUserProfileInput, error) {
+func (ec *executionContext) unmarshalNUpdateUserProfileInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserProfileInput(ctx context.Context, v any) (model.UpdateUserProfileInput, error) {
 	res, err := ec.unmarshalInputUpdateUserProfileInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserProfile2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v model.UserProfile) graphql.Marshaler {
+func (ec *executionContext) marshalNUserProfile2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v model.UserProfile) graphql.Marshaler {
 	return ec._UserProfile(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserProfile2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v *model.UserProfile) graphql.Marshaler {
+func (ec *executionContext) marshalNUserProfile2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v *model.UserProfile) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -616,7 +616,7 @@ func (ec *executionContext) marshalNUserProfile2ᚖgithubᚗcomᚋmcctrixᚋctri
 	return ec._UserProfile(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUserProfile2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v *model.UserProfile) graphql.Marshaler {
+func (ec *executionContext) marshalOUserProfile2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserProfile(ctx context.Context, sel ast.SelectionSet, v *model.UserProfile) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

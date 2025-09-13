@@ -17,51 +17,7 @@ import (
 
 // CreateMyUserData is the resolver for the createMyUserData field.
 func (r *mutationResolver) CreateMyUserData(ctx context.Context, input model.CreateUserDataInput) (*model.UserData, error) {
-	userID, ok := ctx.Value("user_id").(string)
-	if !ok {
-		return nil, fmt.Errorf("unauthenticated")
-	}
-
-	userData := &users_data.UsersData{
-		ID: userID,
-	}
-
-	if input.LastSeen != nil {
-		t, err := time.Parse(time.RFC3339, *input.LastSeen)
-		if err != nil {
-			return nil, fmt.Errorf("invalid LastSeen format: %w", err)
-		}
-		userData.LastSeen = &t
-	}
-	if input.Followers != nil {
-		userData.Followers = pq.StringArray(input.Followers)
-	}
-	if input.Followings != nil {
-		userData.Followings = pq.StringArray(input.Followings)
-	}
-
-	err := r.UserDataService.CreateData(userData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create user data: %w", err)
-	}
-
-	requestedFields := helpers.GetRequestedFields(ctx)
-	createdData, err := r.UserDataService.GetDataByIDWithFields(userID, requestedFields)
-	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve created user data: %w", err)
-	}
-
-	var lastSeen *string
-	if createdData.LastSeen != nil {
-		s := createdData.LastSeen.Format(time.RFC3339)
-		lastSeen = &s
-	}
-
-	return &model.UserData{
-		LastSeen:   lastSeen,
-		Followers:  createdData.Followers,
-		Followings: createdData.Followings,
-	}, nil
+	panic(fmt.Errorf("not implemented: CreateMyUserData - createMyUserData"))
 }
 
 // UpdateMyUserData is the resolver for the updateMyUserData field.

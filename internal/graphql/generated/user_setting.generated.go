@@ -321,16 +321,16 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNUpdateUserSettingInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserSettingInput(ctx context.Context, v any) (model.UpdateUserSettingInput, error) {
+func (ec *executionContext) unmarshalNUpdateUserSettingInput2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserSettingInput(ctx context.Context, v any) (model.UpdateUserSettingInput, error) {
 	res, err := ec.unmarshalInputUpdateUserSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserSetting2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v model.UserSetting) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSetting2githubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v model.UserSetting) graphql.Marshaler {
 	return ec._UserSetting(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSetting2ᚖgithubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v *model.UserSetting) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSetting2ᚖgithubᚗcomᚋctrixcodeᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v *model.UserSetting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

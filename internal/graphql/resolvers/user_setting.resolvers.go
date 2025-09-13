@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/lib/pq"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
 )
@@ -42,7 +43,9 @@ func (r *mutationResolver) UpdateMyUserSetting(ctx context.Context, input model.
 		return nil, fmt.Errorf("failed to update user setting: %w", err)
 	}
 
-	updatedSetting, err := r.UserSettingService.GetSettingByID(userID)
+	// Fetch the updated setting with specific fields
+	requestedFields := helpers.GetRequestedFields(ctx)
+	updatedSetting, err := r.UserSettingService.GetSettingByIDWithFields(userID, requestedFields)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve updated user setting: %w", err)
 	}
@@ -62,7 +65,10 @@ func (r *queryResolver) MyUserSetting(ctx context.Context) (*model.UserSetting, 
 		return nil, fmt.Errorf("unauthenticated")
 	}
 
-	userSetting, err := r.UserSettingService.GetSettingByID(userID)
+	// Get requested fields from GraphQL context
+	requestedFields := helpers.GetRequestedFields(ctx)
+
+	userSetting, err := r.UserSettingService.GetSettingByIDWithFields(userID, requestedFields)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user setting: %w", err)
 	}

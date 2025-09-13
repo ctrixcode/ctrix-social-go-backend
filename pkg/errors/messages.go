@@ -22,6 +22,12 @@ var (
 	InvalidPostID      = ErrorType{Code: "INVALID_POST_ID", Message: "Invalid post ID"}
 	PostNotFound       = ErrorType{Code: "POST_NOT_FOUND", Message: "Post not found"}
 	FailedToUpdatePost = ErrorType{Code: "FAILED_TO_UPDATE_POST", Message: "Failed to update post"}
+
+	// Post Like Errors
+	PostAlreadyLiked = ErrorType{Code: "POST_ALREADY_LIKED", Message: "Post already liked by this user"}
+	FailedToLikePost = ErrorType{Code: "FAILED_TO_LIKE_POST", Message: "Failed to like post"}
+	PostNotLiked     = ErrorType{Code: "POST_NOT_LIKED", Message: "Post not liked by this user"}
+	FailedToUnlikePost = ErrorType{Code: "FAILED_TO_UNLIKE_POST", Message: "Failed to unlike post"}
 )
 
 var (

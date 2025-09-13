@@ -35,11 +35,17 @@ func (r *pgPostRepository) CreatePost(post *Post) error {
 }
 
 func (r *pgPostRepository) GetPostByID(id string) (*Post, error) {
+	return r.GetPostByIDWithFields(id, []string{})
+}
+
+func (r *pgPostRepository) GetPostByIDWithFields(id string, fields []string) (*Post, error) {
 	var post Post
-	query, args, err := r.sq.Select("*").
+	builder := r.sq.Select(r.formatFields(fields)...).
 		From("posts").
 		Where(sq.Eq{"id": id}).
-		ToSql()
+		Where(sq.Eq{"deleted_at": nil}) // Added filter for deleted_at
+
+	query, args, err := builder.ToSql()
 
 	if err != nil {
 		return nil, err
@@ -83,4 +89,43 @@ func (r *pgPostRepository) DeletePost(id string) error {
 
 	_, err = r.db.Exec(query, args...)
 	return err
+}
+
+// formatFields converts GraphQL field names to database column names.
+// If fields is empty, it returns "*" to select all columns.
+func (r *pgPostRepository) formatFields(fields []string) []string {
+	if len(fields) == 0 {
+		return []string{"*"}
+	}
+
+	// Map GraphQL field names to database column names
+	// This is a simple example, more complex mappings might be needed
+	// depending on your schema and database conventions.
+	formatted := make([]string, 0, len(fields))
+	for _, field := range fields {
+		switch field {
+		case "id":
+			formatted = append(formatted, "id")
+		case "creatorID":
+			formatted = append(formatted, "creator_id")
+		case "groupID":
+			formatted = append(formatted, "group_id")
+		case "textContent":
+			formatted = append(formatted, "text_content")
+		case "picturesAttached":
+			formatted = append(formatted, "pictures_attached")
+		case "createdAt":
+			formatted = append(formatted, "created_at")
+		case "updatedAt":
+			formatted = append(formatted, "updated_at")
+		case "deletedAt":
+			formatted = append(formatted, "deleted_at")
+		default:
+			// If a field is not explicitly mapped, use its snake_case version
+			// or handle as an error, depending on strictness.
+			// For now, we'll just append it as is, assuming it matches.
+			formatted = append(formatted, field)
+		}
+	}
+	return formatted
 }

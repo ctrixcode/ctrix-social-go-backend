@@ -7,3 +7,17 @@ type Mutation struct {
 
 type Query struct {
 }
+
+type UpdateUserSettingInput struct {
+	BlockUser  []string `json:"blockUser,omitempty"`
+	HidePost   []string `json:"hidePost,omitempty"`
+	HideStory  []string `json:"hideStory,omitempty"`
+	ShowOnline *bool    `json:"showOnline,omitempty"`
+}
+
+type UserSetting struct {
+	BlockUser  []string `json:"blockUser"`
+	HidePost   []string `json:"hidePost"`
+	HideStory  []string `json:"hideStory"`
+	ShowOnline bool     `json:"showOnline"`
+}

@@ -18,7 +18,9 @@ func main() {
 	}
 
 	application.SetupRoutes()
-	graphql.NewGraphQLServer(application.Router)
+	if err := graphql.SetupGraphQL(application.Router, application.DB); err != nil {
+		log.Fatalf("Failed to setup GraphQL: %v", err)
+	}
 
 	if err := application.Serve(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)

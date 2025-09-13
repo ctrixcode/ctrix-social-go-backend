@@ -11,14 +11,16 @@ import (
 
 	"github.com/mcctrix/ctrix-social-go-backend/internal/auth"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
 	"github.com/mcctrix/ctrix-social-go-backend/pkg/database"
 	customMiddleware "github.com/mcctrix/ctrix-social-go-backend/pkg/middleware"
 )
 
 // Application holds all application-wide dependencies
 type Application struct {
-	Router *chi.Mux
-	DB     *sqlx.DB
+	Router             *chi.Mux
+	DB                 *sqlx.DB
+	UserSettingService users_setting.Service
 	// Add other dependencies like Logger, Config, etc. here
 }
 
@@ -29,7 +31,11 @@ func NewApplication() (*Application, error) {
 	}
 
 	// Initialize database connection
-	app.DB = database.DBConnection() // Assuming DBConnection returns *sql.DB
+	app.DB = database.DBConnection()
+
+	// Initialize UserSettingService
+	userSettingRepo := users_setting.NewRepository(app.DB)
+	app.UserSettingService = users_setting.NewService(userSettingRepo)
 
 	return app, nil
 }

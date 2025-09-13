@@ -10,6 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -41,11 +42,20 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		SayHello func(childComplexity int, name string) int
+		SayHello            func(childComplexity int, name string) int
+		UpdateMyUserSetting func(childComplexity int, input model.UpdateUserSettingInput) int
 	}
 
 	Query struct {
-		Hello func(childComplexity int) int
+		Hello         func(childComplexity int) int
+		MyUserSetting func(childComplexity int) int
+	}
+
+	UserSetting struct {
+		BlockUser  func(childComplexity int) int
+		HidePost   func(childComplexity int) int
+		HideStory  func(childComplexity int) int
+		ShowOnline func(childComplexity int) int
 	}
 }
 
@@ -80,12 +90,59 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.SayHello(childComplexity, args["name"].(string)), true
 
+	case "Mutation.updateMyUserSetting":
+		if e.complexity.Mutation.UpdateMyUserSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMyUserSetting_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMyUserSetting(childComplexity, args["input"].(model.UpdateUserSettingInput)), true
+
 	case "Query.hello":
 		if e.complexity.Query.Hello == nil {
 			break
 		}
 
 		return e.complexity.Query.Hello(childComplexity), true
+
+	case "Query.myUserSetting":
+		if e.complexity.Query.MyUserSetting == nil {
+			break
+		}
+
+		return e.complexity.Query.MyUserSetting(childComplexity), true
+
+	case "UserSetting.blockUser":
+		if e.complexity.UserSetting.BlockUser == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.BlockUser(childComplexity), true
+
+	case "UserSetting.hidePost":
+		if e.complexity.UserSetting.HidePost == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.HidePost(childComplexity), true
+
+	case "UserSetting.hideStory":
+		if e.complexity.UserSetting.HideStory == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.HideStory(childComplexity), true
+
+	case "UserSetting.showOnline":
+		if e.complexity.UserSetting.ShowOnline == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.ShowOnline(childComplexity), true
 
 	}
 	return 0, false
@@ -94,7 +151,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputUpdateUserSettingInput,
+	)
 	first := true
 
 	switch opCtx.Operation.Operation {
@@ -197,6 +256,28 @@ var sources = []*ast.Source{
 
 type Mutation {
   sayHello(name: String!): String!
+}
+`, BuiltIn: false},
+	{Name: "../schema/user_setting.graphqls", Input: `type UserSetting {
+  blockUser: [String!]!
+  hidePost: [String!]!
+  hideStory: [String!]!
+  showOnline: Boolean!
+}
+
+input UpdateUserSettingInput {
+  blockUser: [String!]
+  hidePost: [String!]
+  hideStory: [String!]
+  showOnline: Boolean
+}
+
+extend type Query {
+  myUserSetting: UserSetting!
+}
+
+extend type Mutation {
+  updateMyUserSetting(input: UpdateUserSettingInput!): UserSetting!
 }
 `, BuiltIn: false},
 }

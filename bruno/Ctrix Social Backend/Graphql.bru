@@ -12,7 +12,12 @@ post {
 
 body:graphql {
   query {
-    hello
+    myUserSetting {
+      blockUser
+      hidePost
+      hideStory
+      showOnline
+    }
   }
   
 }

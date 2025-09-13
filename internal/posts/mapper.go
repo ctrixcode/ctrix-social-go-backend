@@ -2,13 +2,10 @@ package posts
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 func CreatePostRequestToPost(req *CreatePostRequest) *Post {
 	return &Post{
-		ID:               uuid.New().String(),
 		GroupID:          req.GroupID,
 		TextContent:      req.TextContent,
 		PicturesAttached: req.PicturesAttached,

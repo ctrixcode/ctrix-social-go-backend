@@ -25,6 +25,11 @@ func NewPostHandler(service Service, validator *validator.Validate) *PostHandler
 }
 
 func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+
 	var req CreatePostRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
@@ -36,11 +41,13 @@ func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) error {
 
 	post := CreatePostRequestToPost(&req)
 
+	post.CreatorID = userID
+
 	if err := h.service.CreatePost(post); err != nil {
 		return errors.InternalServerError(errors.FailedToCreatePost, err.Error())
 	}
 
-	response.JSONSuccess(w, PostToPostResponse(post), http.StatusCreated, "Post created successfully")
+	response.JSONSuccess(w, nil, http.StatusCreated, "Post created successfully")
 	return nil
 }
 

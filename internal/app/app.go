@@ -11,6 +11,7 @@ import (
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/healthcheck"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
 	customMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
@@ -54,6 +55,11 @@ func (app *Application) SetupRoutes() {
 			// /v1/auth routes
 			rV1.Route("/auth", func(rAuth chi.Router) {
 				if err := auth.SetupAuth(rAuth, app.DB); err != nil {
+					panic(err) // Handle error during setup
+				}
+			})
+			rV1.Route("/post", func(rPosts chi.Router) {
+				if err := posts.SetupPosts(rPosts, app.DB); err != nil {
 					panic(err) // Handle error during setup
 				}
 			})

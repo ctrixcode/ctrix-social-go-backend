@@ -23,8 +23,8 @@ func NewRepository(db *sqlx.DB) PostRepository {
 
 func (r *pgPostRepository) CreatePost(post *Post) error {
 	query, args, err := r.sq.Insert("posts").
-		Columns("id", "creator_id", "group_id", "text_content", "pictures_attached", "created_at", "updated_at", "deleted_at").
-		Values(post.ID, post.CreatorID, post.GroupID, post.TextContent, post.PicturesAttached, post.CreatedAt, post.UpdatedAt, post.DeletedAt).
+		Columns("creator_id", "group_id", "text_content", "pictures_attached", "created_at", "updated_at", "deleted_at").
+		Values(post.CreatorID, post.GroupID, post.TextContent, post.PicturesAttached, post.CreatedAt, post.UpdatedAt, post.DeletedAt).
 		ToSql()
 
 	if err != nil {

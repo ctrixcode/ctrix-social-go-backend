@@ -11,8 +11,8 @@ post {
 }
 
 body:graphql {
-  mutation CreatePost($text: String!) {
-    createPost(textContent: $text) {
+  query {
+    myPosts {
       id
       textContent
     }

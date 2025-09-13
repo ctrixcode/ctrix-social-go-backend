@@ -43,12 +43,10 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Mutation struct {
 		CreateMyUserData    func(childComplexity int, input model.CreateUserDataInput) int
-		CreatePost          func(childComplexity int, input model.CreatePostInput) int
 		SayHello            func(childComplexity int, name string) int
 		UpdateMyUserData    func(childComplexity int, input model.UpdateUserDataInput) int
 		UpdateMyUserProfile func(childComplexity int, input model.UpdateUserProfileInput) int
 		UpdateMyUserSetting func(childComplexity int, input model.UpdateUserSettingInput) int
-		UpdatePost          func(childComplexity int, id string, input model.UpdatePostInput) int
 	}
 
 	Post struct {
@@ -127,18 +125,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateMyUserData(childComplexity, args["input"].(model.CreateUserDataInput)), true
 
-	case "Mutation.createPost":
-		if e.complexity.Mutation.CreatePost == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createPost_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(model.CreatePostInput)), true
-
 	case "Mutation.sayHello":
 		if e.complexity.Mutation.SayHello == nil {
 			break
@@ -186,18 +172,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateMyUserSetting(childComplexity, args["input"].(model.UpdateUserSettingInput)), true
-
-	case "Mutation.updatePost":
-		if e.complexity.Mutation.UpdatePost == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updatePost_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdatePost(childComplexity, args["id"].(string), args["input"].(model.UpdatePostInput)), true
 
 	case "Post.createdAt":
 		if e.complexity.Post.CreatedAt == nil {
@@ -415,9 +389,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreatePostInput,
 		ec.unmarshalInputCreateUserDataInput,
-		ec.unmarshalInputUpdatePostInput,
 		ec.unmarshalInputUpdateUserDataInput,
 		ec.unmarshalInputUpdateUserProfileInput,
 		ec.unmarshalInputUpdateUserSettingInput,
@@ -527,25 +499,9 @@ var sources = []*ast.Source{
   updatedAt: String!
 }
 
-input CreatePostInput {
-  groupID: ID
-  textContent: String
-  picturesAttached: [String!]
-}
-
-input UpdatePostInput {
-  textContent: String
-  picturesAttached: [String!]
-}
-
 extend type Query {
   post(id: ID!): Post
   myPosts: [Post!]
-}
-
-extend type Mutation {
-  createPost(input: CreatePostInput!): Post!
-  updatePost(id: ID!, input: UpdatePostInput!): Post!
 }
 `, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `type Query {

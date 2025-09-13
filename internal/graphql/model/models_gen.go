@@ -2,12 +2,6 @@
 
 package model
 
-type CreatePostInput struct {
-	GroupID          *string  `json:"groupID,omitempty"`
-	TextContent      *string  `json:"textContent,omitempty"`
-	PicturesAttached []string `json:"picturesAttached,omitempty"`
-}
-
 type CreateUserDataInput struct {
 	LastSeen   *string  `json:"lastSeen,omitempty"`
 	Followers  []string `json:"followers,omitempty"`
@@ -27,11 +21,6 @@ type Post struct {
 }
 
 type Query struct {
-}
-
-type UpdatePostInput struct {
-	TextContent      *string  `json:"textContent,omitempty"`
-	PicturesAttached []string `json:"picturesAttached,omitempty"`
 }
 
 type UpdateUserDataInput struct {

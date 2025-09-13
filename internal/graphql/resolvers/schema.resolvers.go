@@ -13,7 +13,7 @@ import (
 
 // SayHello is the resolver for the sayHello field.
 func (r *mutationResolver) SayHello(ctx context.Context, name string) (string, error) {
-	panic(fmt.Errorf("not implemented: SayHello - sayHello"))
+	return fmt.Sprintf("Hello, %s!", name), nil
 }
 
 // Hello is the resolver for the hello field.

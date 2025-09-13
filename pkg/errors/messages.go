@@ -28,6 +28,12 @@ var (
 	FailedToLikePost = ErrorType{Code: "FAILED_TO_LIKE_POST", Message: "Failed to like post"}
 	PostNotLiked     = ErrorType{Code: "POST_NOT_LIKED", Message: "Post not liked by this user"}
 	FailedToUnlikePost = ErrorType{Code: "FAILED_TO_UNLIKE_POST", Message: "Failed to unlike post"}
+
+	// Post Comment Like Errors
+	CommentAlreadyLiked = ErrorType{Code: "COMMENT_ALREADY_LIKED", Message: "Comment already liked by this user"}
+	FailedToLikeComment = ErrorType{Code: "FAILED_TO_LIKE_COMMENT", Message: "Failed to like comment"}
+	CommentNotLiked     = ErrorType{Code: "COMMENT_NOT_LIKED", Message: "Comment not liked by this user"}
+	FailedToUnlikeComment = ErrorType{Code: "FAILED_TO_UNLIKE_COMMENT", Message: "Failed to unlike comment"}
 )
 
 var (

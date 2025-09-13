@@ -16,6 +16,12 @@ var (
 	ErrNoFileData          = ErrorType{Code: "NO_FILE_DATA_ERROR", Message: "No file data received"}
 	ErrFileProcessingError = ErrorType{Code: "FILE_PROCESSING_ERROR", Message: "Error processing file"}
 	ErrUsageLimitExceeded  = ErrorType{Code: "USAGE_LIMIT_EXCEEDED_ERROR", Message: "Usage limit exceeded."}
+
+	// Post Errors
+	FailedToCreatePost = ErrorType{Code: "FAILED_TO_CREATE_POST", Message: "Failed to create post"}
+	InvalidPostID      = ErrorType{Code: "INVALID_POST_ID", Message: "Invalid post ID"}
+	PostNotFound       = ErrorType{Code: "POST_NOT_FOUND", Message: "Post not found"}
+	FailedToUpdatePost = ErrorType{Code: "FAILED_TO_UPDATE_POST", Message: "Failed to update post"}
 )
 
 var (

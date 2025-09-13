@@ -43,11 +43,22 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Mutation struct {
 		CreateMyUserData    func(childComplexity int, input model.CreateUserDataInput) int
-		CreateMyUserProfile func(childComplexity int, input model.CreateUserProfileInput) int
+		CreatePost          func(childComplexity int, input model.CreatePostInput) int
 		SayHello            func(childComplexity int, name string) int
 		UpdateMyUserData    func(childComplexity int, input model.UpdateUserDataInput) int
 		UpdateMyUserProfile func(childComplexity int, input model.UpdateUserProfileInput) int
 		UpdateMyUserSetting func(childComplexity int, input model.UpdateUserSettingInput) int
+		UpdatePost          func(childComplexity int, id string, input model.UpdatePostInput) int
+	}
+
+	Post struct {
+		CreatedAt        func(childComplexity int) int
+		CreatorID        func(childComplexity int) int
+		GroupID          func(childComplexity int) int
+		ID               func(childComplexity int) int
+		PicturesAttached func(childComplexity int) int
+		TextContent      func(childComplexity int) int
+		UpdatedAt        func(childComplexity int) int
 	}
 
 	Query struct {
@@ -55,6 +66,7 @@ type ComplexityRoot struct {
 		MyUserData    func(childComplexity int) int
 		MyUserProfile func(childComplexity int) int
 		MyUserSetting func(childComplexity int) int
+		Post          func(childComplexity int, id string) int
 	}
 
 	UserData struct {
@@ -115,17 +127,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateMyUserData(childComplexity, args["input"].(model.CreateUserDataInput)), true
 
-	case "Mutation.createMyUserProfile":
-		if e.complexity.Mutation.CreateMyUserProfile == nil {
+	case "Mutation.createPost":
+		if e.complexity.Mutation.CreatePost == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createMyUserProfile_args(ctx, rawArgs)
+		args, err := ec.field_Mutation_createPost_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateMyUserProfile(childComplexity, args["input"].(model.CreateUserProfileInput)), true
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(model.CreatePostInput)), true
 
 	case "Mutation.sayHello":
 		if e.complexity.Mutation.SayHello == nil {
@@ -175,6 +187,67 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.UpdateMyUserSetting(childComplexity, args["input"].(model.UpdateUserSettingInput)), true
 
+	case "Mutation.updatePost":
+		if e.complexity.Mutation.UpdatePost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePost_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePost(childComplexity, args["id"].(string), args["input"].(model.UpdatePostInput)), true
+
+	case "Post.createdAt":
+		if e.complexity.Post.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Post.CreatedAt(childComplexity), true
+
+	case "Post.creatorID":
+		if e.complexity.Post.CreatorID == nil {
+			break
+		}
+
+		return e.complexity.Post.CreatorID(childComplexity), true
+
+	case "Post.groupID":
+		if e.complexity.Post.GroupID == nil {
+			break
+		}
+
+		return e.complexity.Post.GroupID(childComplexity), true
+
+	case "Post.id":
+		if e.complexity.Post.ID == nil {
+			break
+		}
+
+		return e.complexity.Post.ID(childComplexity), true
+
+	case "Post.picturesAttached":
+		if e.complexity.Post.PicturesAttached == nil {
+			break
+		}
+
+		return e.complexity.Post.PicturesAttached(childComplexity), true
+
+	case "Post.textContent":
+		if e.complexity.Post.TextContent == nil {
+			break
+		}
+
+		return e.complexity.Post.TextContent(childComplexity), true
+
+	case "Post.updatedAt":
+		if e.complexity.Post.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Post.UpdatedAt(childComplexity), true
+
 	case "Query.hello":
 		if e.complexity.Query.Hello == nil {
 			break
@@ -202,6 +275,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.MyUserSetting(childComplexity), true
+
+	case "Query.post":
+		if e.complexity.Query.Post == nil {
+			break
+		}
+
+		args, err := ec.field_Query_post_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
 
 	case "UserData.followers":
 		if e.complexity.UserData.Followers == nil {
@@ -330,8 +415,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreatePostInput,
 		ec.unmarshalInputCreateUserDataInput,
-		ec.unmarshalInputCreateUserProfileInput,
+		ec.unmarshalInputUpdatePostInput,
 		ec.unmarshalInputUpdateUserDataInput,
 		ec.unmarshalInputUpdateUserProfileInput,
 		ec.unmarshalInputUpdateUserSettingInput,
@@ -432,6 +518,38 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../schema/post.graphqls", Input: `type Post {
+  id: ID!
+  creatorID: ID!
+  groupID: ID
+  textContent: String
+  picturesAttached: [String!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+input CreatePostInput {
+  creatorID: ID!
+  groupID: ID
+  textContent: String
+  picturesAttached: [String!]
+}
+
+input UpdatePostInput {
+  groupID: ID
+  textContent: String
+  picturesAttached: [String!]
+}
+
+extend type Query {
+  post(id: ID!): Post
+}
+
+extend type Mutation {
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
+}
+`, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `type Query {
   hello: String!
 }
@@ -480,19 +598,6 @@ extend type Mutation {
   hobbies: [String!]
 }
 
-input CreateUserProfileInput {
-  firstName: String
-  lastName: String
-  profilePicture: String
-  avatar: String
-  relationStatus: String
-  dob: String
-  bio: String
-  gender: String
-  familyMembers: [String!]
-  hobbies: [String!]
-}
-
 input UpdateUserProfileInput {
   firstName: String
   lastName: String
@@ -511,7 +616,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  createMyUserProfile(input: CreateUserProfileInput!): UserProfile!
   updateMyUserProfile(input: UpdateUserProfileInput!): UserProfile!
 }
 `, BuiltIn: false},

@@ -441,96 +441,6 @@ func (ec *executionContext) fieldContext_UserProfile_hobbies(_ context.Context, 
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateUserProfileInput(ctx context.Context, obj any) (model.CreateUserProfileInput, error) {
-	var it model.CreateUserProfileInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"firstName", "lastName", "profilePicture", "avatar", "relationStatus", "dob", "bio", "gender", "familyMembers", "hobbies"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "firstName":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("firstName"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FirstName = data
-		case "lastName":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastName"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.LastName = data
-		case "profilePicture":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profilePicture"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ProfilePicture = data
-		case "avatar":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatar"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Avatar = data
-		case "relationStatus":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("relationStatus"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RelationStatus = data
-		case "dob":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dob"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Dob = data
-		case "bio":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bio"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Bio = data
-		case "gender":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gender"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Gender = data
-		case "familyMembers":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("familyMembers"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FamilyMembers = data
-		case "hobbies":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hobbies"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Hobbies = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateUserProfileInput(ctx context.Context, obj any) (model.UpdateUserProfileInput, error) {
 	var it model.UpdateUserProfileInput
 	asMap := map[string]any{}
@@ -686,11 +596,6 @@ func (ec *executionContext) _UserProfile(ctx context.Context, sel ast.SelectionS
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
-
-func (ec *executionContext) unmarshalNCreateUserProfileInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐCreateUserProfileInput(ctx context.Context, v any) (model.CreateUserProfileInput, error) {
-	res, err := ec.unmarshalInputCreateUserProfileInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
 
 func (ec *executionContext) unmarshalNUpdateUserProfileInput2githubᚗcomᚋmcctrixᚋctrixᚑsocialᚑgoᚑbackendᚋinternalᚋgraphqlᚋmodelᚐUpdateUserProfileInput(ctx context.Context, v any) (model.UpdateUserProfileInput, error) {
 	res, err := ec.unmarshalInputUpdateUserProfileInput(ctx, v)

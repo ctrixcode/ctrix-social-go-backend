@@ -2,29 +2,39 @@
 
 package model
 
+type CreatePostInput struct {
+	CreatorID        string   `json:"creatorID"`
+	GroupID          *string  `json:"groupID,omitempty"`
+	TextContent      *string  `json:"textContent,omitempty"`
+	PicturesAttached []string `json:"picturesAttached,omitempty"`
+}
+
 type CreateUserDataInput struct {
 	LastSeen   *string  `json:"lastSeen,omitempty"`
 	Followers  []string `json:"followers,omitempty"`
 	Followings []string `json:"followings,omitempty"`
 }
 
-type CreateUserProfileInput struct {
-	FirstName      *string  `json:"firstName,omitempty"`
-	LastName       *string  `json:"lastName,omitempty"`
-	ProfilePicture *string  `json:"profilePicture,omitempty"`
-	Avatar         *string  `json:"avatar,omitempty"`
-	RelationStatus *string  `json:"relationStatus,omitempty"`
-	Dob            *string  `json:"dob,omitempty"`
-	Bio            *string  `json:"bio,omitempty"`
-	Gender         *string  `json:"gender,omitempty"`
-	FamilyMembers  []string `json:"familyMembers,omitempty"`
-	Hobbies        []string `json:"hobbies,omitempty"`
-}
-
 type Mutation struct {
 }
 
+type Post struct {
+	ID               string   `json:"id"`
+	CreatorID        string   `json:"creatorID"`
+	GroupID          *string  `json:"groupID,omitempty"`
+	TextContent      *string  `json:"textContent,omitempty"`
+	PicturesAttached []string `json:"picturesAttached,omitempty"`
+	CreatedAt        string   `json:"createdAt"`
+	UpdatedAt        string   `json:"updatedAt"`
+}
+
 type Query struct {
+}
+
+type UpdatePostInput struct {
+	GroupID          *string  `json:"groupID,omitempty"`
+	TextContent      *string  `json:"textContent,omitempty"`
+	PicturesAttached []string `json:"picturesAttached,omitempty"`
 }
 
 type UpdateUserDataInput struct {

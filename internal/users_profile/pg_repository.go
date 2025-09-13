@@ -90,6 +90,31 @@ func (r *pgProfileRepository) DeleteProfile(id string) error {
 	return err
 }
 
+func (r *pgProfileRepository) GetProfilesByCreatorID(creatorID string) ([]*UserProfile, error) {
+	return r.GetProfilesByCreatorIDWithFields(creatorID, []string{}) // Call the new method with empty fields
+}
+
+func (r *pgProfileRepository) GetProfilesByCreatorIDWithFields(creatorID string, fields []string) ([]*UserProfile, error) {
+	var profiles []*UserProfile
+	builder := r.sq.Select(r.formatFields(fields)...).
+		From("users_profile").
+		Where(sq.Eq{"creator_id": creatorID})
+
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.Select(&profiles, query, args...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return profiles, nil
+}
+
 // formatFields converts GraphQL field names to database column names.
 // If fields is empty, it returns "*" to select all columns.
 func (r *pgProfileRepository) formatFields(fields []string) []string {

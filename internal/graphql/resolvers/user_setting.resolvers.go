@@ -8,10 +8,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/model"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/lib/pq"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
 )
 
 // UpdateMyUserSetting is the resolver for the updateMyUserSetting field.

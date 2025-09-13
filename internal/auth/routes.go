@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/middleware"
 )
 
 // RegisterRoutes registers the authentication routes to the given router.

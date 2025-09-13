@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/mcctrix/ctrix-social-go-backend/internal/auth_session_tokens"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/security"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth_session_tokens"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/security"
 )
 
 type AuthService interface {
@@ -174,4 +174,3 @@ func (s *authService) Logout(req *LogoutRequest) error {
 
 	return nil
 }
-

@@ -1,10 +1,10 @@
-module github.com/mcctrix/ctrix-social-go-backend
+module github.com/ctrixcode/ctrix-social-go-backend
 
 go 1.23.0
 
 toolchain go1.24.0
 
-replace github.com/mcctrix/ctrix-social-go-backend => ./
+replace github.com/ctrixcode/ctrix-social-go-backend => ./
 
 require (
 	github.com/go-chi/chi/v5 v5.2.3

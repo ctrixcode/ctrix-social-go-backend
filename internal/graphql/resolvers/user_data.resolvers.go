@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/model"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
 	"github.com/lib/pq"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_data"
 )
 
 // CreateMyUserData is the resolver for the createMyUserData field.

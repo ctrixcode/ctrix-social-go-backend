@@ -9,11 +9,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/mcctrix/ctrix-social-go-backend/internal/auth"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/database"
-	customMiddleware "github.com/mcctrix/ctrix-social-go-backend/pkg/middleware"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/healthcheck"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
+	customMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 )
 
 // Application holds all application-wide dependencies

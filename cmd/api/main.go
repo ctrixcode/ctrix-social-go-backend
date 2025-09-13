@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/app"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql"
 	"github.com/joho/godotenv"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/app"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql"
 )
 
 func main() {

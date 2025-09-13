@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 )
 
 type SuccessResponse struct {

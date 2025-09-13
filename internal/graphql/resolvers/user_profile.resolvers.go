@@ -8,11 +8,11 @@ import (
 	"context"
 	"time"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/model"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
+	pkgErrors "github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/lib/pq"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/helpers"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/model"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
-	pkgErrors "github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
 )
 
 // UpdateMyUserProfile is the resolver for the updateMyUserProfile field.

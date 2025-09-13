@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 )
 
 func AuthMiddleware(jwtService *jwt.JWTService) func(http.Handler) http.Handler {

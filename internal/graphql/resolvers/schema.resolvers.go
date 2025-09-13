@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/generated"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/generated"
 )
 
 // SayHello is the resolver for the sayHello field.

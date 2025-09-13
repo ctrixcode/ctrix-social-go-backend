@@ -1,10 +1,10 @@
 package auth
 
 import (
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth_session_tokens"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/auth_session_tokens"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
 )
 
 // SetupAuth initializes and registers authentication routes.

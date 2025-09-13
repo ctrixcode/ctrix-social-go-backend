@@ -5,16 +5,16 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/generated"
+	graphqlMiddleware "github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/middleware"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/resolvers"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/generated"
-	graphqlMiddleware "github.com/mcctrix/ctrix-social-go-backend/internal/graphql/middleware"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/graphql/resolvers"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/posts"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_data"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
 )
 
 // SetupGraphQL initializes and registers GraphQL routes.

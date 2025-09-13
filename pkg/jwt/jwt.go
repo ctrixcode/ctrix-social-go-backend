@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/security"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/security"
 )
 
 const (

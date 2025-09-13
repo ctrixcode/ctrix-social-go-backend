@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/response"
 	"github.com/go-playground/validator/v10"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/jwt"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/response"
 )
 
 type AuthHandler struct {

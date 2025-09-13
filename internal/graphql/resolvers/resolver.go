@@ -1,10 +1,10 @@
 package resolvers
 
 import (
-	"github.com/mcctrix/ctrix-social-go-backend/internal/posts"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_data"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_profile"
-	"github.com/mcctrix/ctrix-social-go-backend/internal/users_setting"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 )
 
 // This file will not be regenerated automatically.

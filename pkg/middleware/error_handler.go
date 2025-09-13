@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/errors"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/response"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/response"
 )
 
 // AppHandler is a type that represents an HTTP handler that can return an error.

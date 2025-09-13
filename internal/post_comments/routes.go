@@ -8,4 +8,5 @@ import (
 func RegisterPostCommentRoutes(router chi.Router, handler *PostCommentHandler) {
 	router.Post("/", middleware.WrapHandler(handler.CreateComment))
 	router.Put("/{id}", middleware.WrapHandler(handler.UpdateCommentByID))
+	router.Delete("/{id}", middleware.WrapHandler(handler.DeleteCommentByID))
 }

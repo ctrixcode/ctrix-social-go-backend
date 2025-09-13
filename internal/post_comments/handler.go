@@ -25,6 +25,11 @@ func NewPostCommentHandler(service PostCommentService) *PostCommentHandler {
 }
 
 func (h *PostCommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+
 	var req CreateCommentRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
@@ -33,25 +38,23 @@ func (h *PostCommentHandler) CreateComment(w http.ResponseWriter, r *http.Reques
 	if err := h.validator.Struct(req); err != nil {
 		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
 	}
-
-	// Assuming UserID is extracted from JWT and set in context by a middleware
-	// For chi, this would typically be done via context.WithValue and then context.Value
-	userID, ok := r.Context().Value("userID").(uuid.UUID)
-	if !ok {
-		return errors.AuthenticationError(errors.ErrUnauthorized, "Unauthorized")
-	}
 	req.UserID = userID
 
-	comment, err := h.service.CreateComment(&req)
+	_, err := h.service.CreateComment(&req)
 	if err != nil {
 		return err
 	}
 
-	response.JSONSuccess(w, comment, http.StatusCreated, "Comment created successfully")
+	response.JSONSuccess(w, nil, http.StatusCreated, "Comment created successfully")
 	return nil
 }
 
 func (h *PostCommentHandler) UpdateCommentByID(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+
 	commentIDStr := chi.URLParam(r, "id")
 	commentID, err := uuid.Parse(commentIDStr)
 	if err != nil {
@@ -67,11 +70,31 @@ func (h *PostCommentHandler) UpdateCommentByID(w http.ResponseWriter, r *http.Re
 		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
 	}
 
-	comment, err := h.service.UpdateCommentByID(commentID, &req)
+	comment, err := h.service.UpdateCommentByID(commentID, userID, &req)
 	if err != nil {
 		return err
 	}
 
 	response.JSONSuccess(w, comment, http.StatusOK, "Comment updated successfully")
+	return nil
+}
+
+func (h *PostCommentHandler) DeleteCommentByID(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+
+	commentIDStr := chi.URLParam(r, "id")
+	commentID, err := uuid.Parse(commentIDStr)
+	if err != nil {
+		return errors.BadRequestError(errors.ErrBadRequest, "Invalid comment ID")
+	}
+
+	if err := h.service.DeleteComment(commentID, userID); err != nil {
+		return err
+	}
+
+	response.JSONSuccess(w, nil, http.StatusOK, "Comment deleted successfully")
 	return nil
 }

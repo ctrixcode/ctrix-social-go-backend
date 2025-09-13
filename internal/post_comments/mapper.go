@@ -3,7 +3,7 @@ package post_comments
 func ToPostComment(req *CreateCommentRequest) *PostComment {
 	return &PostComment{
 		PostID:    req.PostID.String(),
-		CreatorID: req.UserID.String(),
+		CreatorID: req.UserID,
 		Content:   &req.Content,
 	}
 }

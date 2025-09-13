@@ -1,0 +1,21 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseURL}}/post/comment/eb2f2c9f-5c91-40b8-8d19-53816537c1d1
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "content": "anmol is noob"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

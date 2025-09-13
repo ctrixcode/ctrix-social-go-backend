@@ -1,15 +1,14 @@
 package post_comments
 
 import (
-	"time"
-
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/google/uuid"
 )
 
 type PostCommentService interface {
 	CreateComment(req *CreateCommentRequest) (*PostComment, error)
-	UpdateCommentByID(id uuid.UUID, req *UpdateCommentRequest) (*PostComment, error)
+	UpdateCommentByID(id uuid.UUID, userID string, req *UpdateCommentRequest) (*PostComment, error)
+	DeleteComment(id uuid.UUID, userID string) error
 }
 
 type postCommentService struct {
@@ -24,12 +23,9 @@ func NewPostCommentService(repo PostCommentRepository) PostCommentService {
 
 func (s *postCommentService) CreateComment(req *CreateCommentRequest) (*PostComment, error) {
 	comment := &PostComment{
-		ID:        uuid.New().String(),
 		PostID:    req.PostID.String(),
-		CreatorID: req.UserID.String(), // Assuming UserID from request is the CreatorID
+		CreatorID: req.UserID,
 		Content:   &req.Content,
-		CreatedAt: func() *time.Time { t := time.Now(); return &t }(),
-		UpdatedAt: func() *time.Time { t := time.Now(); return &t }(),
 	}
 
 	if err := s.repo.CreatePostComment(comment); err != nil {
@@ -39,7 +35,7 @@ func (s *postCommentService) CreateComment(req *CreateCommentRequest) (*PostComm
 	return comment, nil
 }
 
-func (s *postCommentService) UpdateCommentByID(id uuid.UUID, req *UpdateCommentRequest) (*PostComment, error) {
+func (s *postCommentService) UpdateCommentByID(id uuid.UUID, userID string, req *UpdateCommentRequest) (*PostComment, error) {
 	comment, err := s.repo.GetPostCommentByID(id.String())
 	if err != nil {
 		return nil, errors.NotFoundError(errors.ErrNotFound)
@@ -49,12 +45,34 @@ func (s *postCommentService) UpdateCommentByID(id uuid.UUID, req *UpdateCommentR
 		return nil, errors.NotFoundError(errors.ErrNotFound)
 	}
 
+	if comment.CreatorID == userID {
+		return nil, errors.BadRequestError(errors.ErrBadRequest)
+	}
+
 	comment.Content = &req.Content
-	comment.UpdatedAt = func() *time.Time { t := time.Now(); return &t }()
 
 	if err := s.repo.UpdatePostComment(comment); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError)
 	}
 
 	return comment, nil
+}
+
+func (s *postCommentService) DeleteComment(id uuid.UUID, userID string) error {
+	comment, err := s.repo.GetPostCommentByID(id.String())
+	if err != nil {
+		return errors.NotFoundError(errors.ErrNotFound)
+	}
+	if comment == nil {
+		return errors.NotFoundError(errors.ErrNotFound)
+	}
+	if comment.CreatorID != userID {
+		return errors.BadRequestError(errors.ErrBadRequest)
+	}
+
+	err = s.repo.DeletePostComment(id.String())
+	if err != nil {
+		return errors.InternalServerError(errors.ErrInternalServerError)
+	}
+	return nil
 }

@@ -75,9 +75,6 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input mode
 		// UpdatedAt is handled by PostgreSQL automatically
 	}
 
-	if input.GroupID != nil {
-		post.GroupID = input.GroupID
-	}
 	if input.TextContent != nil {
 		post.TextContent = input.TextContent
 	}

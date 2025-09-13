@@ -534,7 +534,6 @@ input CreatePostInput {
 }
 
 input UpdatePostInput {
-  groupID: ID
   textContent: String
   picturesAttached: [String!]
 }

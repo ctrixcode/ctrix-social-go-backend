@@ -30,7 +30,6 @@ type Query struct {
 }
 
 type UpdatePostInput struct {
-	GroupID          *string  `json:"groupID,omitempty"`
 	TextContent      *string  `json:"textContent,omitempty"`
 	PicturesAttached []string `json:"picturesAttached,omitempty"`
 }

@@ -11,21 +11,12 @@ post {
 }
 
 body:graphql {
-  query {
-    myUserProfile {
-      firstName
-      lastName
-    }
-    myUserData {
-      followers
-      followings
-    }
-    myUserSetting {
-      showOnline
-      blockUser
+  mutation CreatePost($text: String!) {
+    createPost(textContent: $text) {
+      id
+      textContent
     }
   }
-  
 }
 
 settings {

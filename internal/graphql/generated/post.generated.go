@@ -335,20 +335,13 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"groupID", "textContent", "picturesAttached"}
+	fieldsInOrder := [...]string{"textContent", "picturesAttached"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "groupID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.GroupID = data
 		case "textContent":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("textContent"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)

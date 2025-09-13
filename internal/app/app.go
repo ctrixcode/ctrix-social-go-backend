@@ -9,10 +9,10 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
 
-	// Import your modules here
-
+	"github.com/mcctrix/ctrix-social-go-backend/internal/auth"
 	"github.com/mcctrix/ctrix-social-go-backend/internal/healthcheck"
-	"github.com/mcctrix/ctrix-social-go-backend/pkg/database" // Import database package
+	"github.com/mcctrix/ctrix-social-go-backend/pkg/database"
+	customMiddleware "github.com/mcctrix/ctrix-social-go-backend/pkg/middleware"
 )
 
 // Application holds all application-wide dependencies
@@ -39,32 +39,24 @@ func (app *Application) SetupRoutes() {
 	// Global middleware
 	app.Router.Use(middleware.Logger)
 	app.Router.Use(middleware.Recoverer)
+	app.Router.Use(customMiddleware.ErrorHandler) // Apply the custom error handler middleware
 
 	app.Router.Route("/api", func(r chi.Router) {
+		healthcheck.RegisterRoutes(r)
 
-		// API Version 1 routes
-		app.Router.Group(func(r chi.Router) {
-			r.Route("/v1", func(r chi.Router) {
-				// Add other v1 module routes here:
-				// users.RegisterRoutes(r, app.DB) // Example for users module
-				// posts.RegisterRoutes(r, app.DB) // Example for posts module
-			})
-		})
-
-		// API Version 2 routes (example)
-		app.Router.Group(func(r chi.Router) {
-			r.Route("/v2", func(r chi.Router) {
-				// healthcheck.RegisterRoutesV2(r) // If healthcheck has a v2
-				// users.RegisterRoutesV2(r, app.DB)
+		r.Route("/v1", func(rV1 chi.Router) {
+			// /v1/auth routes
+			rV1.Route("/auth", func(rAuth chi.Router) {
+				if err := auth.SetupAuth(rAuth, app.DB); err != nil {
+					panic(err) // Handle error during setup
+				}
 			})
 		})
 
 		// Add a root handler for unmatched routes
-		app.Router.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Not Found", http.StatusNotFound)
 		})
-
-		healthcheck.RegisterRoutes(r)
 	})
 }
 

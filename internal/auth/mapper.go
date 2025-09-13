@@ -1,19 +1,10 @@
 package auth
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
 func ToUserAuth(req *RegisterRequest) *UserAuth {
-	now := time.Now()
 	return &UserAuth{
-		ID:        uuid.New().String(),
-		Email:     req.Email,
-		Password:  req.Password,
-		CreatedAt: &now,
-		UpdatedAt: &now,
+		Email:    req.Email,
+		Username: req.Username,
+		Password: req.Password,
 	}
 }
 

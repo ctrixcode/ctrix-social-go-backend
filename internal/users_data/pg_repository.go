@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log/slog"
 
-	"github.com/Masterminds/squirrel"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/jmoiron/sqlx"
@@ -132,9 +131,9 @@ func (r *pgDataRepository) formatFields(fields []string) []string {
 
 func (r *pgDataRepository) Follow(userID string, followerID string) error {
 	query, args, err := r.sq.Update("users_data").
-		Set("followers", squirrel.Expr("array_append(followers, ?)", followerID)).
+		Set("followers", sq.Expr("array_append(followers, ?)", followerID)).
 		Where(sq.Eq{"id": userID}).
-		Where(squirrel.Expr("? <> ALL(followers)", followerID)).
+		Where(sq.Expr("? <> ALL(followers)", followerID)).
 		ToSql()
 	if err != nil {
 		slog.Error("Follow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
@@ -142,9 +141,9 @@ func (r *pgDataRepository) Follow(userID string, followerID string) error {
 	}
 
 	query2, args2, err := r.sq.Update("users_data").
-		Set("followings", squirrel.Expr("array_append(followings, ?)", userID)).
+		Set("followings", sq.Expr("array_append(followings, ?)", userID)).
 		Where(sq.Eq{"id": followerID}).
-		Where(squirrel.Expr("? <> ALL(followings)", userID)).
+		Where(sq.Expr("? <> ALL(followings)", userID)).
 		ToSql()
 	if err != nil {
 		slog.Error("Follow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
@@ -187,7 +186,7 @@ func (r *pgDataRepository) Follow(userID string, followerID string) error {
 }
 func (r *pgDataRepository) UnFollow(userID string, followerID string) error {
 	query, args, err := r.sq.Update("users_data").
-		Set("followers", squirrel.Expr("array_remove(followers, ?)", followerID)).
+		Set("followers", sq.Expr("array_remove(followers, ?)", followerID)).
 		Where(sq.Eq{"id": userID}).
 		ToSql()
 	if err != nil {
@@ -196,7 +195,7 @@ func (r *pgDataRepository) UnFollow(userID string, followerID string) error {
 	}
 
 	query2, args2, err := r.sq.Update("users_data").
-		Set("followings", squirrel.Expr("array_remove(followings, ?)", userID)).
+		Set("followings", sq.Expr("array_remove(followings, ?)", userID)).
 		Where(sq.Eq{"id": followerID}).
 		ToSql()
 	if err != nil {

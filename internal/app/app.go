@@ -10,6 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/feeds" // Added feeds import
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/healthcheck"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comment_likes"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
@@ -62,6 +63,10 @@ func (app *Application) SetupRoutes() {
 					panic(err) // Handle error during setup
 				}
 			})
+
+			if err := feeds.SetupFeeds(rV1, app.DB); err != nil { // Added feeds setup
+				panic(err) // Handle error during setup
+			}
 			rV1.Route("/post", func(rPosts chi.Router) {
 				jwtService, err := jwt.NewJWTService()
 				if err != nil {

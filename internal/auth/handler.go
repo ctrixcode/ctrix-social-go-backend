@@ -31,13 +31,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) error {
 		tokenString := authHeader[len("Bearer "):]
 		_, err := h.jwtService.ValidateAccessToken(tokenString)
 		if err == nil {
-			return errors.BadRequestError(errors.ErrBadRequest, "Already logged in")
+			return errors.BadRequestError(errors.ErrBadRequest, errors.ErrBadRequest)
 		}
 	}
 
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return errors.BadRequestError(errors.ErrBadRequest)
+		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
 	}
 
 	if err := h.validator.Struct(req); err != nil {
@@ -61,7 +61,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) error {
 		tokenString := authHeader[len("Bearer "):]
 		_, err := h.jwtService.ValidateAccessToken(tokenString)
 		if err == nil {
-			return errors.BadRequestError(errors.ErrBadRequest, "Already logged in")
+			return errors.BadRequestError(errors.ErrBadRequest, errors.ErrBadRequest)
 		}
 	}
 

@@ -63,7 +63,7 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) error {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
 		slog.Warn("UpdatePost: Invalid post ID format", "post_id_param", id, "error", err)
-		return errors.BadRequestError(errors.InvalidPostID, "Invalid post ID format")
+		return errors.BadRequestError(errors.InvalidPostID)
 	}
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil { // 10 MB
@@ -106,7 +106,7 @@ func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) error {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
 		slog.Warn("DeletePost: Invalid post ID format", "post_id_param", id, "error", err)
-		return errors.BadRequestError(errors.InvalidPostID, "Invalid post ID format")
+		return errors.BadRequestError(errors.InvalidPostID)
 	}
 
 	err := h.service.DeletePost(id, userID)

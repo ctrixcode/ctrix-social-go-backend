@@ -2,8 +2,7 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
+	"log/slog"
 	"time"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth_session_tokens"
@@ -99,11 +98,15 @@ func (s *authService) Login(req *LoginRequest, userAgent string) (*AuthResponse,
 		return nil, errors.AuthenticationError(errors.ErrInvalidCredentials)
 	}
 
-	if os.Getenv("APP_ENV") == "production" {
+	// TODO: This check should be moved to a separate validation step or a dedicated environment check
+	// For now, keeping it as is, but noting it's not ideal to check os.Getenv in service logic.
+	// Also, the password check should ideally happen regardless of APP_ENV for security.
+	// This block is commented out to allow password check in all environments for now.
+	// if os.Getenv("APP_ENV") == "production" {
 		if !security.CheckPasswordHash(req.Password, userAuth.Password) {
 			return nil, errors.AuthenticationError(errors.ErrInvalidCredentials)
 		}
-	}
+	// }
 
 	// Generate tokens
 	accessToken, err := s.jwtService.GenerateAccessToken(userAuth.ID)
@@ -142,8 +145,7 @@ func (s *authService) RefreshToken(req *RefreshTokenRequest, userAgent string) (
 	if sessionToken == nil || sessionToken.IsUsed || sessionToken.ExpiresAt.Before(time.Now()) {
 		// Invalidate all tokens for this user if a used/expired/non-existent token is presented
 		if claims != nil && claims.UserID != "" {
-			// TODO: What should we do here?
-			fmt.Println("User ID tried using expired/invalid refresh token: ", claims.UserID)
+			slog.Warn("User ID tried using expired/invalid refresh token", "user_id", claims.UserID)
 		}
 		return nil, errors.AuthenticationError(errors.ErrInvalidRefreshToken)
 	}

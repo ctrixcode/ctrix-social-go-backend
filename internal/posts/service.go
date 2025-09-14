@@ -1,35 +1,118 @@
 package posts
 
 import (
+	"context"
 	"fmt"
+	"mime/multipart"
+	"path/filepath"
+	"strings"
+	"time"
 
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 )
 
 type Service interface {
-	CreatePost(post *Post) error
+	CreatePost(post *Post, files []*multipart.FileHeader) error
 	GetPostByID(id string) (*Post, error)
 	GetPostByIDWithFields(id string, fields []string) (*Post, error)
 	GetPostsByCreatorID(creatorID string) ([]Post, error)
 	GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error)
-	UpdatePost(post *Post) error
+	UpdatePost(post *Post, files []*multipart.FileHeader) error
 	DeletePost(id, userID string) error
 }
 
 type service struct {
-	repo PostRepository
+	repo     PostRepository
+	cld      *cloudinary.Service
+	authRepo auth.AuthRepository
 }
 
-func NewService(repo PostRepository) Service {
+func NewService(repo PostRepository, cld *cloudinary.Service, authRepo auth.AuthRepository) Service {
 	return &service{
-		repo: repo,
+		repo:     repo,
+		cld:      cld,
+		authRepo: authRepo,
 	}
 }
 
-func (s *service) CreatePost(post *Post) error {
-	err := s.repo.CreatePost(post)
+func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
+	user, err := s.authRepo.GetUserByID(post.CreatorID)
+	if err != nil {
+		return fmt.Errorf("failed to get user for public_id generation: %w", err)
+	}
+
+	var urls []string
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open file: %w", err)
+		}
+		defer file.Close()
+
+		// Sanitize and truncate filename
+		filename := strings.TrimSuffix(fileHeader.Filename, filepath.Ext(fileHeader.Filename))
+		if len(filename) > 10 {
+			filename = filename[:10]
+		}
+
+		publicID := fmt.Sprintf("%s/posts/%s_%d", user.Username, filename, time.Now().UnixNano())
+
+		uploadResult, err := s.cld.UploadFile(context.Background(), file, uploader.UploadParams{PublicID: publicID})
+		if err != nil {
+			return fmt.Errorf("failed to upload file to cloudinary: %w", err)
+		}
+		urls = append(urls, uploadResult.SecureURL)
+	}
+	post.PicturesAttached = urls
+
+	err = s.repo.CreatePost(post)
 	if err != nil {
 		return fmt.Errorf("failed to create post: %w", err)
+	}
+	return nil
+}
+
+func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
+	user, err := s.authRepo.GetUserByID(post.CreatorID)
+	if err != nil {
+		return fmt.Errorf("failed to get user for public_id generation: %w", err)
+	}
+
+	// Handle file uploads
+	var urls []string
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open file: %w", err)
+		}
+		defer file.Close()
+
+		// Sanitize and truncate filename
+		filename := strings.TrimSuffix(fileHeader.Filename, filepath.Ext(fileHeader.Filename))
+		if len(filename) > 10 {
+			filename = filename[:10]
+		}
+
+		publicID := fmt.Sprintf("%s/posts/%s_%d", user.Username, filename, time.Now().UnixNano())
+
+		uploadResult, err := s.cld.UploadFile(context.Background(), file, uploader.UploadParams{PublicID: publicID})
+		if err != nil {
+			return fmt.Errorf("failed to upload file to cloudinary: %w", err)
+		}
+		urls = append(urls, uploadResult.SecureURL)
+	}
+
+	// Combine old and new pictures
+	if len(urls) > 0 {
+		post.PicturesAttached = append(post.PicturesAttached, urls...)
+	}
+
+	err = s.repo.UpdatePost(post)
+	if err != nil {
+		return fmt.Errorf("failed to update post: %w", err)
 	}
 	return nil
 }
@@ -48,14 +131,6 @@ func (s *service) GetPostByIDWithFields(id string, fields []string) (*Post, erro
 		return nil, fmt.Errorf("failed to get post by ID with fields: %w", err)
 	}
 	return post, nil
-}
-
-func (s *service) UpdatePost(post *Post) error {
-	err := s.repo.UpdatePost(post)
-	if err != nil {
-		return fmt.Errorf("failed to update post: %w", err)
-	}
-	return nil
 }
 
 func (s *service) DeletePost(id, userID string) error {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/generated"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/resolvers"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
@@ -33,6 +34,9 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 		return errors.InternalServerError(errors.ErrSomethingWentWrong)
 	}
 
+	// Initialize AuthRepository
+	authRepo := auth.NewRepository(db)
+
 	// Initialize UserSettingService
 	userSettingRepo := users_setting.NewRepository(db)
 	userSettingService := users_setting.NewService(userSettingRepo)
@@ -47,7 +51,7 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 
 	// Initialize PostService
 	postRepo := posts.NewRepository(db)
-	postService := posts.NewService(postRepo)
+	postService := posts.NewService(postRepo, cloudinaryService, authRepo)
 
 	// Initialize PostCommentService
 	postCommentRepo := post_comments.NewRepository(db)

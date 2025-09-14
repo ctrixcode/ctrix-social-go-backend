@@ -1,15 +1,13 @@
 package posts
 
 import (
-	"encoding/json"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/response"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 type PostHandler struct {
@@ -30,20 +28,25 @@ func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) error {
 		return errors.AuthenticationError(errors.ErrUnauthorized)
 	}
 
-	var req CreatePostRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := r.ParseMultipartForm(10 << 20); err != nil { // 10 MB
 		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
 	}
 
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
+	textContent := r.FormValue("text_content")
+	groupID := r.FormValue("group_id")
+
+	post := &Post{
+		CreatorID:   userID,
+		TextContent: &textContent,
 	}
 
-	post := CreatePostRequestToPost(&req)
+	if groupID != "" {
+		post.GroupID = &groupID
+	}
 
-	post.CreatorID = userID
+	files := r.MultipartForm.File["pictures_attached"]
 
-	if err := h.service.CreatePost(post); err != nil {
+	if err := h.service.CreatePost(post, files); err != nil {
 		return errors.InternalServerError(errors.FailedToCreatePost, err.Error())
 	}
 
@@ -57,27 +60,29 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) error {
 		return errors.BadRequestError(errors.InvalidPostID, "Invalid post ID format")
 	}
 
-	var req UpdatePostRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := r.ParseMultipartForm(10 << 20); err != nil { // 10 MB
 		return errors.BadRequestError(errors.ErrBadRequest, err.Error())
-	}
-
-	if err := h.validator.Struct(req); err != nil {
-		return errors.BadRequestError(errors.ErrValidationFailed, err.Error())
 	}
 
 	existingPost, err := h.service.GetPostByID(id)
 	if err != nil {
 		return errors.NotFoundError(errors.PostNotFound, err.Error())
 	}
+	if existingPost == nil {
+		return errors.NotFoundError(errors.PostNotFound)
+	}
 
-	updatedPost := UpdatePostRequestToPost(&req, existingPost)
+	if textContent := r.FormValue("text_content"); textContent != "" {
+		existingPost.TextContent = &textContent
+	}
 
-	if err := h.service.UpdatePost(updatedPost); err != nil {
+	files := r.MultipartForm.File["pictures_attached"]
+
+	if err := h.service.UpdatePost(existingPost, files); err != nil {
 		return errors.InternalServerError(errors.FailedToUpdatePost, err.Error())
 	}
 
-	response.JSONSuccess(w, PostToPostResponse(updatedPost), http.StatusOK, "Post updated successfully")
+	response.JSONSuccess(w, PostToPostResponse(existingPost), http.StatusOK, "Post updated successfully")
 	return nil
 }
 

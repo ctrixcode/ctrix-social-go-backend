@@ -4,24 +4,6 @@ import (
 	"time"
 )
 
-func CreatePostRequestToPost(req *CreatePostRequest) *Post {
-	return &Post{
-		GroupID:          req.GroupID,
-		TextContent:      req.TextContent,
-		PicturesAttached: req.PicturesAttached,
-	}
-}
-
-func UpdatePostRequestToPost(req *UpdatePostRequest, post *Post) *Post {
-	if req.TextContent != nil {
-		post.TextContent = req.TextContent
-	}
-	if req.PicturesAttached != nil {
-		post.PicturesAttached = req.PicturesAttached
-	}
-	return post
-}
-
 func PostToPostResponse(post *Post) *PostResponse {
 	var createdAt, updatedAt *string
 	if post.CreatedAt != nil {

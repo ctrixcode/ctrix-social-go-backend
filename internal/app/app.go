@@ -5,10 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/jmoiron/sqlx"
-
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/feeds" // Added feeds import
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/healthcheck"
@@ -18,9 +14,14 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	customMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jmoiron/sqlx"
 )
 
 // Application holds all application-wide dependencies
@@ -28,6 +29,7 @@ type Application struct {
 	Router             *chi.Mux
 	DB                 *sqlx.DB
 	UserSettingService users_setting.Service
+	CloudinaryService  *cloudinary.Service
 	// Add other dependencies like Logger, Config, etc. here
 }
 
@@ -39,6 +41,14 @@ func NewApplication() (*Application, error) {
 
 	// Initialize database connection
 	app.DB = database.DBConnection()
+
+	// Load Cloudinary config and initialize service
+	cldConfig := config.LoadCloudinaryConfig()
+	cldService, err := cloudinary.NewService(cldConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize cloudinary service: %w", err)
+	}
+	app.CloudinaryService = cldService
 
 	// Initialize UserSettingService
 	userSettingRepo := users_setting.NewRepository(app.DB)
@@ -79,7 +89,7 @@ func (app *Application) SetupRoutes() {
 					panic(err)
 				}
 				rPosts.Use(customMiddleware.AuthMiddleware(jwtService))
-				if err := posts.SetupPosts(rPosts, app.DB); err != nil {
+				if err := posts.SetupPosts(rPosts, app.DB, app.CloudinaryService); err != nil {
 					panic(err) // Handle error during setup
 				}
 				rPosts.Route("/like", func(rPostLikes chi.Router) {

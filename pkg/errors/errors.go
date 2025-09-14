@@ -6,26 +6,32 @@ import (
 )
 
 type APIError struct {
-	Type          ErrorType   `json:"errorType"`
+	Type          string      `json:"errorType"`
 	StatusCode    int         `json:"statusCode"`
 	Details       interface{} `json:"details,omitempty"`
 	IsOperational bool        `json:"isOperational"`
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("API Error: [Code: %s, Status: %d] %s", e.Type.Code, e.StatusCode, e.Type.Message)
+	return fmt.Sprintf("API Error: [Code: %s, Status: %d Operation:%s] %s", e.Type, e.StatusCode, e.IsOperational, e.Details)
 }
 
 // GetMessage retrieves the error message from the ErrorType.
-func (e *APIError) GetMessage() string {
-	return e.Type.Message
+func (e *APIError) GetMessage() interface{} {
+	return e.Details
 }
 
 func NewAPIError(statusCode int, errorType ErrorType, details interface{}, isOperational bool) *APIError {
+	var finalDetails interface{}
+	if details != nil {
+		finalDetails = details
+	} else {
+		finalDetails = errorType.Message
+	}
 	return &APIError{
-		Type:          errorType,
+		Type:          errorType.Code,
 		StatusCode:    statusCode,
-		Details:       details,
+		Details:       finalDetails,
 		IsOperational: isOperational,
 	}
 }

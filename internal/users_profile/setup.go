@@ -13,7 +13,7 @@ import (
 func SetupUserProfile(router chi.Router, db *sqlx.DB, cfg *config.Config) error {
 	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
-		slog.Error(err)
+		slog.Error("Failed to initialize cloudinary service", "error", err)
 		return errors.InternalServerError(errors.ErrSomethingWentWrong)
 	}
 

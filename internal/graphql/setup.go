@@ -12,6 +12,9 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	graphqlMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 	"github.com/go-chi/chi/v5"
@@ -24,6 +27,11 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 	if err != nil {
 		return fmt.Errorf("failed to create JWT service: %w", err)
 	}
+	cloudinaryService, err := cloudinary.NewService(config.LoadCloudinaryConfig())
+	if err != nil {
+		fmt.Println(err)
+		return errors.InternalServerError(errors.ErrSomethingWentWrong)
+	}
 
 	// Initialize UserSettingService
 	userSettingRepo := users_setting.NewRepository(db)
@@ -35,7 +43,7 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 
 	// Initialize UserProfileService
 	userProfileRepo := users_profile.NewRepository(db)
-	userProfileService := users_profile.NewService(userProfileRepo)
+	userProfileService := users_profile.NewService(userProfileRepo, cloudinaryService)
 
 	// Initialize PostService
 	postRepo := posts.NewRepository(db)

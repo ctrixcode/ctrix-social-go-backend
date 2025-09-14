@@ -1,0 +1,19 @@
+meta {
+  name: Profile Picture
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseURL}}/upload/profile_picture
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  picture: @file(C:\Users\CandyKisu\Pictures\anurag.jpeg)
+}
+
+settings {
+  encodeUrl: true
+}

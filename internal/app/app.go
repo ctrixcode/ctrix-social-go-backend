@@ -16,6 +16,7 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_likes"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
@@ -67,6 +68,11 @@ func (app *Application) SetupRoutes() {
 			if err := feeds.SetupFeeds(rV1, app.DB); err != nil { // Added feeds setup
 				panic(err) // Handle error during setup
 			}
+			rV1.Route("/upload", func(rUpload chi.Router) {
+				if err := users_profile.SetupUserProfile(rUpload, app.DB); err != nil {
+					panic(err) // Handle error during setup
+				}
+			})
 			rV1.Route("/post", func(rPosts chi.Router) {
 				jwtService, err := jwt.NewJWTService()
 				if err != nil {

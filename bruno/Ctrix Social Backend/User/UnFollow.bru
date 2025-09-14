@@ -1,0 +1,15 @@
+meta {
+  name: UnFollow
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{baseURL}}/users/follow/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

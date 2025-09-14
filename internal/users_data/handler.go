@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/response"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 )
@@ -30,8 +31,9 @@ func (h *DataHandler) Follow(w http.ResponseWriter, r *http.Request) error {
 	followerID := chi.URLParam(r, "follower_id")
 	if err := h.service.Follow(userID, followerID); err != nil {
 		slog.Error("Follow: Failed to follow user", "error", err, "user_id", userID, "follower_id", followerID)
-		return errors.InternalServerError(errors.ErrInternalServerError)
+		return err
 	}
+	response.JSONSuccess(w, nil, http.StatusOK, "Followed successfully")
 	return nil
 }
 
@@ -44,7 +46,8 @@ func (h *DataHandler) UnFollow(w http.ResponseWriter, r *http.Request) error {
 	followerID := chi.URLParam(r, "follower_id")
 	if err := h.service.UnFollow(userID, followerID); err != nil {
 		slog.Error("UnFollow: Failed to unfollow user", "error", err, "user_id", userID, "follower_id", followerID)
-		return errors.InternalServerError(errors.ErrInternalServerError)
+		return err
 	}
+	response.JSONSuccess(w, nil, http.StatusOK, "Unfollowed successfully")
 	return nil
 }

@@ -64,7 +64,13 @@ func (app *Application) SetupRoutes() {
 	// Global middleware
 	app.Router.Use(middleware.Logger)
 	app.Router.Use(middleware.Recoverer)
-	app.Router.Use(customMiddleware.ErrorHandler) // Apply the custom error handler middleware
+	app.Router.Use(customMiddleware.ErrorHandler)
+
+	jwtService, err := jwt.NewJWTService(app.Config.JWT)
+	if err != nil {
+		slog.Error("Failed to create JWT service", "error", err)
+		os.Exit(1)
+	}
 
 	app.Router.Route("/api", func(r chi.Router) {
 		healthcheck.RegisterRoutes(r)
@@ -79,6 +85,7 @@ func (app *Application) SetupRoutes() {
 			})
 
 			rV1.Route("/users", func(r chi.Router) {
+				r.Use(customMiddleware.AuthMiddleware(jwtService))
 				users_data.Setup(r, app.DB, app.Config)
 			})
 
@@ -91,11 +98,6 @@ func (app *Application) SetupRoutes() {
 				}
 			})
 			rV1.Route("/post", func(rPosts chi.Router) {
-				jwtService, err := jwt.NewJWTService(app.Config.JWT)
-				if err != nil {
-					slog.Error("Failed to create JWT service", "error", err)
-					os.Exit(1)
-				}
 				rPosts.Use(customMiddleware.AuthMiddleware(jwtService))
 				posts.Setup(rPosts, app.DB, app.CloudinaryService)
 

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -54,7 +55,7 @@ func LoadConfig() (*Config, error) {
 	// Load the .env file in the current directory
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Printf("No .env file found or failed to load: %v\n", err)
+		slog.Error("No .env file found or failed to load: %v\n", err)
 	}
 
 	cfg := &Config{
@@ -74,10 +75,10 @@ func LoadConfig() (*Config, error) {
 		},
 		Cloudinary: CloudinaryConfig{
 			CloudName: getEnv("CLOUDINARY_CLOUD_NAME", ""),
-			APIKey:    getEnv("CLOUDINARY_API_KEY", ""),			APISecret: getEnv("CLOUDINARY_API_SECRET", ""),
+			APIKey:    getEnv("CLOUDINARY_API_KEY", ""), APISecret: getEnv("CLOUDINARY_API_SECRET", ""),
 		},
 		Log: LogConfig{
-			Level:  getEnv("LOG_LEVEL", "info"), // Default to info level
+			Level:  getEnv("LOG_LEVEL", "info"),  // Default to info level
 			Format: getEnv("LOG_FORMAT", "json"), // Default to JSON format
 		},
 	}

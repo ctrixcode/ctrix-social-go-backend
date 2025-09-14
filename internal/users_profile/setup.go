@@ -1,7 +1,7 @@
 package users_profile
 
 import (
-	"fmt"
+	"log/slog"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
@@ -13,7 +13,7 @@ import (
 func SetupUserProfile(router chi.Router, db *sqlx.DB, cfg *config.Config) error {
 	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error(err)
 		return errors.InternalServerError(errors.ErrSomethingWentWrong)
 	}
 

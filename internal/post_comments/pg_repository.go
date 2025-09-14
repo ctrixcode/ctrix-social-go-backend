@@ -2,10 +2,11 @@ package post_comments
 
 import (
 	"database/sql"
-	"fmt"
+	"log/slog"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -27,13 +28,13 @@ func (r *pgPostCommentRepository) CreatePostComment(postComment *PostComment) er
 		Values(postComment.PostID, postComment.CreatorID, postComment.Content, postComment.PicturesAttached).ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building CreatePostComment query: %v\n", err)
-		return err
+		slog.Error("CreatePostComment: Failed to build SQL query", "error", err, "post_id", postComment.PostID, "creator_id", postComment.CreatorID, "content", postComment.Content, "pictures_attached", postComment.PicturesAttached)
+		return errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
 	_, err = r.db.Exec(query, args...)
 	if err != nil {
-		fmt.Printf("Error executing CreatePostComment: %v\n", err)
+		slog.Error("CreatePostComment: Failed to execute SQL query", "error", err, "query", query, "args", args)
 	}
 	return err
 }
@@ -46,13 +47,13 @@ func (r *pgPostCommentRepository) GetPostCommentByID(id string) (*PostComment, e
 		ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building GetPostCommentByID query: %v\n", err)
+		slog.Error("GetPostCommentByID: Failed to build SQL query", "error", err, "post_id", id)
 		return nil, err
 	}
 
 	err = r.db.Get(&postComment, query, args...)
 	if err != nil {
-		fmt.Printf("Error getting post comment by ID: %v\n", err)
+		slog.Error("GetPostCommentByID: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -75,17 +76,15 @@ func (r *pgPostCommentRepository) GetPostCommentsByPostID(postID string) ([]Comm
 		ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building GetPostCommentsByPostID query: %v\n", err)
+		slog.Error("GetPostCommentsByPostID: Failed to build SQL query", "error", err, "post_id", postID)
 		return nil, err
 	}
 
-	fmt.Printf("Executing GetPostCommentsByPostID query: %s with args: %v\n", query, args)
 	err = r.db.Select(&comments, query, args...)
 	if err != nil {
-		fmt.Printf("Error selecting comments with author by post ID: %v\n", err)
+		slog.Error("GetPostCommentsByPostID: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		return nil, err
 	}
-	fmt.Printf("Successfully fetched %d comments with author by post ID\n", len(comments))
 	return comments, nil
 }
 
@@ -97,13 +96,13 @@ func (r *pgPostCommentRepository) GetPostCommentsByCreatorID(creatorID string) (
 		ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building GetPostCommentsByCreatorID query: %v\n", err)
+		slog.Error("GetPostCommentsByCreatorID: Failed to build SQL query", "error", err, "creator_id", creatorID)
 		return nil, err
 	}
 
 	_, err = r.db.Exec(query, args...)
 	if err != nil {
-		fmt.Printf("Error executing GetPostCommentsByCreatorID: %v\n", err)
+		slog.Error("GetPostCommentsByCreatorID: Failed to execute SQL query", "error", err, "query", query, "args", args)
 	}
 	return postComments, nil
 }
@@ -113,13 +112,13 @@ func (r *pgPostCommentRepository) UpdatePostComment(postComment *PostComment) er
 		Set("content", postComment.Content).Set("pictures_attached", postComment.PicturesAttached).Where(sq.Eq{"id": postComment.ID}).ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building UpdatePostComment query: %v\n", err)
+		slog.Error("UpdatePostComment: Failed to build SQL query", "error", err, "post_id", postComment.ID, "content", postComment.Content, "pictures_attached", postComment.PicturesAttached)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
 	if err != nil {
-		fmt.Printf("Error executing UpdatePostComment: %v\n", err)
+		slog.Error("UpdatePostComment: Failed to execute SQL query", "error", err, "query", query, "args", args)
 	}
 	return err
 }
@@ -130,13 +129,13 @@ func (r *pgPostCommentRepository) DeletePostComment(id string) error {
 		Where(sq.Eq{"id": id}).ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building DeletePostComment query: %v\n", err)
+		slog.Error("DeletePostComment: Failed to build SQL query", "error", err, "post_id", id)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
 	if err != nil {
-		fmt.Printf("Error executing DeletePostComment: %v\n", err)
+		slog.Error("DeletePostComment: Failed to execute SQL query", "error", err, "query", query, "args", args)
 	}
 	return err
 }
@@ -147,14 +146,14 @@ func (r *pgPostCommentRepository) GetPostCommentByIDWithFields(id string, fields
 	query, args, err := r.sq.Select(columns...).From("post_comments").Where(sq.Eq{"id": id}).ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building GetPostCommentByIDWithFields query: %v\n", err)
+		slog.Error("GetPostCommentByIDWithFields: Failed to build SQL query", "error", err, "post_id", id, "fields", fields)
 		return nil, err
 	}
 
 	var postComment PostComment
 	err = r.db.Get(&postComment, query, args...)
 	if err != nil {
-		fmt.Printf("Error getting post comment by ID with fields: %v\n", err)
+		slog.Error("GetPostCommentByIDWithFields: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -177,17 +176,15 @@ func (r *pgPostCommentRepository) GetPostCommentsByPostIDWithFields(postID strin
 		ToSql()
 
 	if err != nil {
-		fmt.Printf("Error building GetPostCommentsByPostIDWithFields query: %v\n", err)
+		slog.Error("GetPostCommentsByPostIDWithFields: Failed to build SQL query", "error", err, "post_id", postID, "fields", fields)
 		return nil, err
 	}
 
-	fmt.Printf("Executing GetPostCommentsByPostIDWithFields query: %s with args: %v\n", query, args)
 	err = r.db.Select(&comments, query, args...)
 	if err != nil {
-		fmt.Printf("Error selecting comments with author by post ID with fields: %v\n", err)
+		slog.Error("GetPostCommentsByPostIDWithFields: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		return nil, err
 	}
-	fmt.Printf("Successfully fetched %d comments with author by post ID with fields\n", len(comments))
 	return comments, nil
 }
 

@@ -1,7 +1,7 @@
 package post_comments
 
 import (
-	"fmt"
+	"log/slog"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/google/uuid"
@@ -33,8 +33,8 @@ func (s *postCommentService) CreateComment(req *CreateCommentRequest) (*PostComm
 	}
 
 	if err := s.repo.CreatePostComment(comment); err != nil {
-		fmt.Printf("Error creating post comment in service: %v\n", err)
-		return nil, errors.InternalServerError(errors.ErrInternalServerError)
+		slog.Error("CreatePostComment: Failed to create post comment in service", "error", err, "post_id", comment.PostID, "creator_id", comment.CreatorID, "content", comment.Content)
+		return nil, err
 	}
 
 	return comment, nil
@@ -43,7 +43,7 @@ func (s *postCommentService) CreateComment(req *CreateCommentRequest) (*PostComm
 func (s *postCommentService) UpdateCommentByID(id uuid.UUID, userID string, req *UpdateCommentRequest) (*PostComment, error) {
 	comment, err := s.repo.GetPostCommentByID(id.String())
 	if err != nil {
-		fmt.Printf("Error getting post comment by ID in service for update: %v\n", err)
+		slog.Error("UpdatePostComment: Failed to get post comment by ID in service", "error", err, "post_id", id)
 		return nil, errors.NotFoundError(errors.ErrNotFound)
 	}
 
@@ -58,7 +58,7 @@ func (s *postCommentService) UpdateCommentByID(id uuid.UUID, userID string, req 
 	comment.Content = &req.Content
 
 	if err := s.repo.UpdatePostComment(comment); err != nil {
-		fmt.Printf("Error updating post comment in service: %v\n", err)
+		slog.Error("UpdatePostComment: Failed to update post comment in service", "error", err, "post_id", id, "content", comment.Content)
 		return nil, errors.InternalServerError(errors.ErrInternalServerError)
 	}
 
@@ -68,7 +68,7 @@ func (s *postCommentService) UpdateCommentByID(id uuid.UUID, userID string, req 
 func (s *postCommentService) DeleteComment(id uuid.UUID, userID string) error {
 	comment, err := s.repo.GetPostCommentByID(id.String())
 	if err != nil {
-		fmt.Printf("Error getting post comment by ID in service for delete: %v\n", err)
+		slog.Error("DeletePostComment: Failed to get post comment by ID in service", "error", err, "post_id", id)
 		return errors.NotFoundError(errors.ErrNotFound)
 	}
 	if comment == nil {
@@ -80,7 +80,7 @@ func (s *postCommentService) DeleteComment(id uuid.UUID, userID string) error {
 
 	err = s.repo.DeletePostComment(id.String())
 	if err != nil {
-		fmt.Printf("Error deleting post comment in service: %v\n", err)
+		slog.Error("Error deleting post comment in service: %v\n", err)
 		return errors.InternalServerError(errors.ErrInternalServerError)
 	}
 	return nil
@@ -91,13 +91,11 @@ func (s *postCommentService) GetCommentByIDWithFields(id string, fields []string
 }
 
 func (s *postCommentService) GetCommentsByPostIDWithFields(postID string, fields []string) ([]CommentResponse, error) {
-	fmt.Printf("Fetching comments for postID: %s with fields: %v\n", postID, fields)
 	commentsWithAuthorDB, err := s.repo.GetPostCommentsByPostIDWithFields(postID, fields)
 	if err != nil {
-		fmt.Printf("Error from repository GetPostCommentsByPostIDWithFields: %v\n", err)
+		slog.Error("Error from repository GetPostCommentsByPostIDWithFields: %v\n", err)
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
-	fmt.Printf("Repository returned %d comments with author\n", len(commentsWithAuthorDB))
 
 	var commentResponses []CommentResponse
 	for _, c := range commentsWithAuthorDB {
@@ -118,6 +116,6 @@ func (s *postCommentService) GetCommentsByPostIDWithFields(postID string, fields
 			},
 		})
 	}
-	fmt.Printf("Mapped %d comments to CommentResponse\n", len(commentResponses))
+	slog.Debug("Mapped comments to CommentResponse", "count", len(commentResponses))
 	return commentResponses, nil
 }

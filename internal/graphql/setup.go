@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -15,7 +16,6 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
-	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	graphqlMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 	"github.com/go-chi/chi/v5"
@@ -30,8 +30,8 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB, cfg *config.Config) error {
 	}
 	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
-		fmt.Println(err)
-		return errors.InternalServerError(errors.ErrSomethingWentWrong)
+		slog.Error("failed to create cloudinary service: %w", err)
+		return err
 	}
 
 	// Initialize AuthRepository
@@ -69,7 +69,7 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB, cfg *config.Config) error {
 	}))
 
 	// Add the GraphQL playground
-	fmt.Println("GraphQL playground available at http://localhost:4000/")
+	slog.Info("GraphQL playground available at http://localhost:4000/")
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Handle("/query", graphqlMiddleware.AuthMiddleware(jwtService)(srv))
 

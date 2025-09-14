@@ -17,6 +17,7 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	customMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 )
 
@@ -62,6 +63,11 @@ func (app *Application) SetupRoutes() {
 				}
 			})
 			rV1.Route("/post", func(rPosts chi.Router) {
+				jwtService, err := jwt.NewJWTService()
+				if err != nil {
+					panic(err)
+				}
+				rPosts.Use(customMiddleware.AuthMiddleware(jwtService))
 				if err := posts.SetupPosts(rPosts, app.DB); err != nil {
 					panic(err) // Handle error during setup
 				}

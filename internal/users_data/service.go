@@ -1,7 +1,7 @@
 package users_data
 
 import (
-	"fmt"
+	"log/slog"
 )
 
 type Service interface {
@@ -25,7 +25,8 @@ func NewService(repo DataRepository) Service {
 func (s *service) CreateData(data *UsersData) error {
 	err := s.repo.CreateData(data)
 	if err != nil {
-		return fmt.Errorf("failed to create user data: %w", err)
+		slog.Error("CreateData: Failed to create user data in service", "error", err, "data", data)
+		return err
 	}
 	return nil
 }
@@ -33,7 +34,8 @@ func (s *service) CreateData(data *UsersData) error {
 func (s *service) GetDataByID(id string) (*UsersData, error) {
 	data, err := s.repo.GetDataByID(id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user data by ID: %w", err)
+		slog.Error("GetDataByID: Failed to get user data by ID in service", "error", err, "data_id", id)
+		return nil, err
 	}
 	return data, nil
 }
@@ -41,7 +43,8 @@ func (s *service) GetDataByID(id string) (*UsersData, error) {
 func (s *service) GetDataByIDWithFields(id string, fields []string) (*UsersData, error) {
 	data, err := s.repo.GetDataByIDWithFields(id, fields)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user data by ID with fields: %w", err)
+		slog.Error("GetDataByIDWithFields: Failed to get user data by ID with fields in service", "error", err, "data_id", id, "fields", fields)
+		return nil, err
 	}
 	return data, nil
 }
@@ -49,7 +52,8 @@ func (s *service) GetDataByIDWithFields(id string, fields []string) (*UsersData,
 func (s *service) UpdateData(data *UsersData) error {
 	err := s.repo.UpdateData(data)
 	if err != nil {
-		return fmt.Errorf("failed to update user data: %w", err)
+		slog.Error("UpdateData: Failed to update user data in service", "error", err, "data", data)
+		return err
 	}
 	return nil
 }
@@ -57,7 +61,8 @@ func (s *service) UpdateData(data *UsersData) error {
 func (s *service) DeleteData(id string) error {
 	err := s.repo.DeleteData(id)
 	if err != nil {
-		return fmt.Errorf("failed to delete user data: %w", err)
+		slog.Error("DeleteData: Failed to delete user data in service", "error", err, "data_id", id)
+		return err
 	}
 	return nil
 }

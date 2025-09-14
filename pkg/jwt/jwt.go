@@ -3,6 +3,7 @@ package jwt
 import (
 	"crypto/ecdsa"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -105,6 +106,7 @@ func (s *JWTService) validateToken(tokenString, expectedSubject string) (*Claims
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+			slog.Error("Unexpected signing method: %v", token.Header["alg"])
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return s.publicKey, nil
@@ -115,10 +117,12 @@ func (s *JWTService) validateToken(tokenString, expectedSubject string) (*Claims
 	}
 
 	if !token.Valid {
+		slog.Error("Invalid token")
 		return nil, fmt.Errorf("invalid token")
 	}
 
 	if claims.Subject != expectedSubject {
+		slog.Error("Invalid token subject: %s", claims.Subject)
 		return nil, fmt.Errorf("invalid token subject: %s", claims.Subject)
 	}
 

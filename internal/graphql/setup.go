@@ -1,7 +1,6 @@
 package graphql
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -26,7 +25,8 @@ import (
 func SetupGraphQL(r *chi.Mux, db *sqlx.DB, cfg *config.Config) error {
 	jwtService, err := jwt.NewJWTService(cfg.JWT)
 	if err != nil {
-		return fmt.Errorf("failed to create JWT service: %w", err)
+		slog.Error("failed to create JWT service: %w", err)
+		return err
 	}
 	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {

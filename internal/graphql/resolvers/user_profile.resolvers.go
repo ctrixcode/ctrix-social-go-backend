@@ -127,3 +127,34 @@ func (r *queryResolver) MyUserProfile(ctx context.Context) (*model.UserProfile, 
 		Hobbies:        userProfile.Hobbies,
 	}, nil
 }
+
+// GetUserProfileByID is the resolver for the getUserProfileByID field.
+func (r *queryResolver) GetUserProfileByID(ctx context.Context, id string) (*model.UserProfile, error) {
+	requestedFields := helpers.GetRequestedFields(ctx)
+	userProfile, err := r.UserProfileService.GetProfileByIDWithFields(id, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+	if userProfile == nil {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "user profile not found")
+	}
+
+	var dob *string
+	if userProfile.Dob != nil {
+		s := userProfile.Dob.Format(time.RFC3339)
+		dob = &s
+	}
+
+	return &model.UserProfile{
+		FirstName:      userProfile.FirstName,
+		LastName:       userProfile.LastName,
+		ProfilePicture: userProfile.ProfilePicture,
+		Avatar:         userProfile.Avatar,
+		RelationStatus: userProfile.RelationStatus,
+		Dob:            dob,
+		Bio:            userProfile.Bio,
+		Gender:         userProfile.Gender,
+		FamilyMembers:  userProfile.FamilyMembers,
+		Hobbies:        userProfile.Hobbies,
+	}, nil
+}

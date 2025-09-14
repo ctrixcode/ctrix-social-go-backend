@@ -26,6 +26,7 @@ input UpdateUserProfileInput {
 
 extend type Query {
   myUserProfile: UserProfile
+  getUserProfileByID(id: ID!): UserProfile
 }
 
 extend type Mutation {

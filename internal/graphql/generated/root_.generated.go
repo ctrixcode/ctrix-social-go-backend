@@ -71,6 +71,7 @@ type ComplexityRoot struct {
 		GetCommentByID      func(childComplexity int, id string) int
 		GetCommentsByPostID func(childComplexity int, postID string) int
 		GetPostsByCreatorID func(childComplexity int, creatorID string) int
+		GetUserProfileByID  func(childComplexity int, id string) int
 		Hello               func(childComplexity int) int
 		MyPosts             func(childComplexity int) int
 		MyUserData          func(childComplexity int) int
@@ -299,6 +300,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetPostsByCreatorID(childComplexity, args["creatorID"].(string)), true
+
+	case "Query.getUserProfileByID":
+		if e.complexity.Query.GetUserProfileByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getUserProfileByID_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUserProfileByID(childComplexity, args["id"].(string)), true
 
 	case "Query.hello":
 		if e.complexity.Query.Hello == nil {
@@ -659,6 +672,7 @@ input UpdateUserProfileInput {
 
 extend type Query {
   myUserProfile: UserProfile
+  getUserProfileByID(id: ID!): UserProfile
 }
 
 extend type Mutation {

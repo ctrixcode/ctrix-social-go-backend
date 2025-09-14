@@ -5,8 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// SetupFeeds initializes and registers all feed-related components and routes.
-func SetupFeeds(router chi.Router, db *sqlx.DB) error {
+func Setup(router chi.Router, db *sqlx.DB) {
 	// Initialize repository
 	feedRepo := NewPGFeedRepository(db)
 
@@ -19,5 +18,4 @@ func SetupFeeds(router chi.Router, db *sqlx.DB) error {
 	// Register routes
 	RegisterFeedRoutes(router, feedHandler)
 
-	return nil
 }

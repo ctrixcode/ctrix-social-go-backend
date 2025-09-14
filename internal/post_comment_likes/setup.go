@@ -6,12 +6,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func SetupPostCommentLikes(router chi.Router, db *sqlx.DB) error {
+func SetupPostCommentLikes(router chi.Router, db *sqlx.DB) {
 	repo := NewRepository(db)
 	service := NewService(repo)
 	validator := validator.New()
 	handler := NewPostCommentLikeHandler(service, validator)
 
 	RegisterPostCommentLikeRoutes(router, handler)
-	return nil
 }

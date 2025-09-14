@@ -82,10 +82,8 @@ func (app *Application) SetupRoutes() {
 				users_data.Setup(r, app.DB, app.Config)
 			})
 
-			if err := feeds.SetupFeeds(rV1, app.DB); err != nil {
-				slog.Error("Failed to setup feeds routes", "error", err)
-				os.Exit(1)
-			}
+			feeds.Setup(rV1, app.DB)
+
 			rV1.Route("/upload", func(rUpload chi.Router) {
 				if err := users_profile.SetupUserProfile(rUpload, app.DB, app.Config); err != nil {
 					slog.Error("Failed to setup user profile routes", "error", err)
@@ -99,26 +97,16 @@ func (app *Application) SetupRoutes() {
 					os.Exit(1)
 				}
 				rPosts.Use(customMiddleware.AuthMiddleware(jwtService))
-				if err := posts.SetupPosts(rPosts, app.DB, app.CloudinaryService); err != nil {
-					slog.Error("Failed to setup posts routes", "error", err)
-					os.Exit(1)
-				}
+				posts.Setup(rPosts, app.DB, app.CloudinaryService)
+
 				rPosts.Route("/like", func(rPostLikes chi.Router) {
-					if err := post_likes.SetupPostLikes(rPostLikes, app.DB); err != nil {
-						slog.Error("Failed to setup post likes routes", "error", err)
-						os.Exit(1)
-					}
+					post_likes.Setup(rPostLikes, app.DB)
 				})
 				rPosts.Route("/comment", func(rPostComments chi.Router) {
-					if err := post_comments.SetupPostComments(rPostComments, app.DB); err != nil {
-						slog.Error("Failed to setup post comments routes", "error", err)
-						os.Exit(1)
-					}
+					post_comments.SetupPostComments(rPostComments, app.DB)
+
 					rPostComments.Route("/like", func(rPostCommentLikes chi.Router) {
-						if err := post_comment_likes.SetupPostCommentLikes(rPostCommentLikes, app.DB); err != nil {
-							slog.Error("Failed to setup post comment likes routes", "error", err)
-							os.Exit(1)
-						}
+						post_comment_likes.SetupPostCommentLikes(rPostCommentLikes, app.DB)
 					})
 				})
 			})

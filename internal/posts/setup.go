@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func SetupPosts(router chi.Router, db *sqlx.DB, cld *cloudinary.Service) error {
+func Setup(router chi.Router, db *sqlx.DB, cld *cloudinary.Service) {
 	repo := NewRepository(db)
 	authRepo := auth.NewRepository(db)
 	service := NewService(repo, cld, authRepo)
@@ -16,5 +16,4 @@ func SetupPosts(router chi.Router, db *sqlx.DB, cld *cloudinary.Service) error {
 	handler := NewPostHandler(service, validator)
 
 	RegisterPostRoutes(router, handler)
-	return nil
 }

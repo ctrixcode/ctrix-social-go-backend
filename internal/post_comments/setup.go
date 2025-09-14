@@ -5,11 +5,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func SetupPostComments(router chi.Router, db *sqlx.DB) error {
+func SetupPostComments(router chi.Router, db *sqlx.DB) {
 	repo := NewRepository(db)
 	service := NewPostCommentService(repo)
 	handler := NewPostCommentHandler(service)
 
 	RegisterPostCommentRoutes(router, handler)
-	return nil
 }

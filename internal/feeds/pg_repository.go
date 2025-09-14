@@ -1,10 +1,11 @@
 package feeds
 
 import (
-	"fmt"
+	"log/slog"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -49,13 +50,15 @@ func (r *PGFeedRepository) GetFeedPostsWithAuthor(cursor string, limit int) ([]P
 
 	query, args, err := builder.ToSql()
 	if err != nil {
-		return nil, fmt.Errorf("failed to build query: %w", err)
+		slog.Error("GetFeedPostsWithAuthor: Failed to build SQL query", "error", err, "cursor_time", cursorTime, "limit", limit)
+		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
 	var postsWithAuthor []PostWithAuthor
 	err = r.db.Select(&postsWithAuthor, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get feed posts with author: %w", err)
+		slog.Error("GetFeedPostsWithAuthor: Failed to execute SQL query", "error", err, "query", query, "args", args)
+		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
 	return postsWithAuthor, nil

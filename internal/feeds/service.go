@@ -17,7 +17,7 @@ func NewFeedService(repo FeedRepository) *FeedService {
 func (s *FeedService) GetFeed(cursor string, limit int) ([]PostWithAuthor, error) {
 	postsWithAuthor, err := s.repo.GetFeedPostsWithAuthor(cursor, limit)
 	if err != nil {
-		slog.Error("Failed to get feed posts with author", err.Error())
+		slog.Error("Failed to get feed posts with author", "Cursor: ", cursor, err.Error())
 		if _, ok := err.(*errors.APIError); ok {
 			return nil, err
 		}

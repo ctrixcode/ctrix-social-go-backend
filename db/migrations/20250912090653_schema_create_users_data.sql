@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users_data (
 
 -- Create a trigger that calls the function before each update
 CREATE TRIGGER update_users_data_updated_at BEFORE UPDATE
-ON users_profile
+ON users_data
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 -- +goose StatementEnd

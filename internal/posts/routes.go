@@ -8,4 +8,5 @@ import (
 func RegisterPostRoutes(router chi.Router, handler *PostHandler) {
 	router.Post("/", middleware.WrapHandler(handler.CreatePost))
 	router.Put("/{id}", middleware.WrapHandler(handler.UpdatePost))
+	router.Delete("/{id}", middleware.WrapHandler(handler.DeletePost))
 }

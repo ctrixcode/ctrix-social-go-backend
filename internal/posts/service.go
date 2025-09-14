@@ -2,6 +2,8 @@ package posts
 
 import (
 	"fmt"
+
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 )
 
 type Service interface {
@@ -11,7 +13,7 @@ type Service interface {
 	GetPostsByCreatorID(creatorID string) ([]Post, error)
 	GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error)
 	UpdatePost(post *Post) error
-	DeletePost(id string) error
+	DeletePost(id, userID string) error
 }
 
 type service struct {
@@ -56,8 +58,18 @@ func (s *service) UpdatePost(post *Post) error {
 	return nil
 }
 
-func (s *service) DeletePost(id string) error {
-	err := s.repo.DeletePost(id)
+func (s *service) DeletePost(id, userID string) error {
+	post, err := s.repo.GetPostByID(id)
+	if err != nil {
+		return errors.NotFoundError(errors.PostNotFound, err.Error())
+	}
+	if post == nil {
+		return errors.NotFoundError(errors.PostNotFound)
+	}
+	if post.CreatorID != userID {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+	err = s.repo.DeletePost(id)
 	if err != nil {
 		return fmt.Errorf("failed to delete post: %w", err)
 	}

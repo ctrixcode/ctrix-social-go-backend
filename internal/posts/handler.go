@@ -80,3 +80,25 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) error {
 	response.JSONSuccess(w, PostToPostResponse(updatedPost), http.StatusOK, "Post updated successfully")
 	return nil
 }
+
+func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		return errors.AuthenticationError(errors.ErrUnauthorized)
+	}
+	id := chi.URLParam(r, "id")
+	if _, err := uuid.Parse(id); err != nil {
+		return errors.BadRequestError(errors.InvalidPostID, "Invalid post ID format")
+	}
+
+	err := h.service.DeletePost(id, userID)
+	if err != nil {
+		if _, ok := err.(*errors.APIError); ok {
+			return err
+		}
+		return errors.InternalServerError(errors.ErrInternalServerError, err.Error())
+	}
+
+	response.JSONSuccess(w, nil, http.StatusOK, "Post deleted successfully")
+	return nil
+}

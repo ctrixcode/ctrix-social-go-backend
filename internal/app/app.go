@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/feeds" // Added feeds import
@@ -30,21 +29,21 @@ type Application struct {
 	DB                 *sqlx.DB
 	UserSettingService users_setting.Service
 	CloudinaryService  *cloudinary.Service
-	// Add other dependencies like Logger, Config, etc. here
+	Config             *config.Config // Add Config to Application struct
 }
 
 // NewApplication creates and initializes a new Application instance
-func NewApplication() (*Application, error) {
+func NewApplication(cfg *config.Config) (*Application, error) {
 	app := &Application{
 		Router: chi.NewRouter(),
+		Config: cfg, // Store the config
 	}
 
 	// Initialize database connection
-	app.DB = database.DBConnection()
+	app.DB = database.NewDBConnection(cfg.Database)
 
-	// Load Cloudinary config and initialize service
-	cldConfig := config.LoadCloudinaryConfig()
-	cldService, err := cloudinary.NewService(cldConfig)
+	// Initialize Cloudinary service
+	cldService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize cloudinary service: %w", err)
 	}
@@ -84,7 +83,7 @@ func (app *Application) SetupRoutes() {
 				}
 			})
 			rV1.Route("/post", func(rPosts chi.Router) {
-				jwtService, err := jwt.NewJWTService()
+				jwtService, err := jwt.NewJWTService(app.Config.JWT)
 				if err != nil {
 					panic(err)
 				}
@@ -119,10 +118,7 @@ func (app *Application) SetupRoutes() {
 
 // Serve starts the HTTP server
 func (app *Application) Serve() error {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "4000"
-	}
+	port := app.Config.Server.Port
 	fmt.Printf("Server starting on port %s\n", port)
 	return http.ListenAndServe(":"+port, app.Router)
 }

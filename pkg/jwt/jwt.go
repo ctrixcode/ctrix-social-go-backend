@@ -26,14 +26,18 @@ type JWTService struct {
 	publicKey  *ecdsa.PublicKey
 }
 
-func NewJWTService() (*JWTService, error) {
+func NewJWTService(cfg config.JWTConfig) (*JWTService, error) {
 	privateKey := security.GetEcdsaPrivateKey()
 	publicKey := &privateKey.PublicKey
+
+	// The JWT secret from config.JWTConfig is not directly used here
+	// as the ECDSA keys are generated from files. If the JWT_SECRET
+	// was intended for symmetric signing, this would need adjustment.
 
 	return &JWTService{
 		privateKey: privateKey,
 		publicKey:  publicKey,
-	}, nil
+	},
 }
 
 type RefreshTokenInfo struct {

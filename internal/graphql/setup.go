@@ -23,12 +23,12 @@ import (
 )
 
 // SetupGraphQL initializes and registers GraphQL routes.
-func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
-	jwtService, err := jwt.NewJWTService()
+func SetupGraphQL(r *chi.Mux, db *sqlx.DB, cfg *config.Config) error {
+	jwtService, err := jwt.NewJWTService(cfg.JWT)
 	if err != nil {
 		return fmt.Errorf("failed to create JWT service: %w", err)
 	}
-	cloudinaryService, err := cloudinary.NewService(config.LoadCloudinaryConfig())
+	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
 		fmt.Println(err)
 		return errors.InternalServerError(errors.ErrSomethingWentWrong)

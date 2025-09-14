@@ -2,6 +2,13 @@
 
 package model
 
+type Author struct {
+	ID         string `json:"id"`
+	Username   string `json:"username"`
+	ProfilePic string `json:"profilePic"`
+	Avatar     string `json:"avatar"`
+}
+
 type Comment struct {
 	ID               string   `json:"id"`
 	PostID           string   `json:"postID"`
@@ -10,6 +17,7 @@ type Comment struct {
 	PicturesAttached []string `json:"picturesAttached,omitempty"`
 	CreatedAt        string   `json:"createdAt"`
 	UpdatedAt        string   `json:"updatedAt"`
+	Author           *Author  `json:"author"`
 }
 
 type Mutation struct {

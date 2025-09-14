@@ -16,3 +16,10 @@ type PostComment struct {
 	UpdatedAt        *time.Time     `db:"updated_at"`
 	DeletedAt        *time.Time     `db:"deleted_at"`
 }
+
+type CommentWithAuthorDB struct {
+	PostComment
+	AuthorUsername   string `db:"author_username"`
+	AuthorProfilePic string `db:"author_profile_picture"`
+	AuthorAvatar     string `db:"author_avatar"`
+}

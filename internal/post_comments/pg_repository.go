@@ -2,6 +2,7 @@ package post_comments
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -26,10 +27,14 @@ func (r *pgPostCommentRepository) CreatePostComment(postComment *PostComment) er
 		Values(postComment.PostID, postComment.CreatorID, postComment.Content, postComment.PicturesAttached).ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building CreatePostComment query: %v\n", err)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing CreatePostComment: %v\n", err)
+	}
 	return err
 }
 
@@ -41,11 +46,13 @@ func (r *pgPostCommentRepository) GetPostCommentByID(id string) (*PostComment, e
 		ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building GetPostCommentByID query: %v\n", err)
 		return nil, err
 	}
 
 	err = r.db.Get(&postComment, query, args...)
 	if err != nil {
+		fmt.Printf("Error getting post comment by ID: %v\n", err)
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -54,22 +61,32 @@ func (r *pgPostCommentRepository) GetPostCommentByID(id string) (*PostComment, e
 	return &postComment, nil
 }
 
-func (r *pgPostCommentRepository) GetPostCommentsByPostID(postID string) ([]PostComment, error) {
-	var postComments []PostComment
-	query, args, err := r.sq.Select("*").
-		From("post_comments").
-		Where(sq.Eq{"post_id": postID}).
+func (r *pgPostCommentRepository) GetPostCommentsByPostID(postID string) ([]CommentWithAuthorDB, error) {
+	var comments []CommentWithAuthorDB
+	query, args, err := r.sq.Select(
+		"pc.*",
+		"ua.username AS author_username",
+		"COALESCE(up.profile_picture, '') AS author_profile_picture",
+		"COALESCE(up.avatar, '') AS author_avatar",
+	).From("post_comments pc").
+		LeftJoin("users_auth ua ON pc.creator_id = ua.id").
+		LeftJoin("users_profile up ON pc.creator_id = up.id").
+		Where(sq.Eq{"pc.post_id": postID}).
 		ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building GetPostCommentsByPostID query: %v\n", err)
 		return nil, err
 	}
 
-	err = r.db.Select(&postComments, query, args...)
+	fmt.Printf("Executing GetPostCommentsByPostID query: %s with args: %v\n", query, args)
+	err = r.db.Select(&comments, query, args...)
 	if err != nil {
+		fmt.Printf("Error selecting comments with author by post ID: %v\n", err)
 		return nil, err
 	}
-	return postComments, nil
+	fmt.Printf("Successfully fetched %d comments with author by post ID\n", len(comments))
+	return comments, nil
 }
 
 func (r *pgPostCommentRepository) GetPostCommentsByCreatorID(creatorID string) ([]PostComment, error) {
@@ -80,28 +97,30 @@ func (r *pgPostCommentRepository) GetPostCommentsByCreatorID(creatorID string) (
 		ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building GetPostCommentsByCreatorID query: %v\n", err)
 		return nil, err
 	}
 
-	err = r.db.Select(&postComments, query, args...)
+	_, err = r.db.Exec(query, args...)
 	if err != nil {
-		return nil, err
+		fmt.Printf("Error executing GetPostCommentsByCreatorID: %v\n", err)
 	}
 	return postComments, nil
 }
 
 func (r *pgPostCommentRepository) UpdatePostComment(postComment *PostComment) error {
 	query, args, err := r.sq.Update("post_comments").
-		Set("content", postComment.Content).
-		Set("pictures_attached", postComment.PicturesAttached).
-		Where(sq.Eq{"id": postComment.ID}).
-		ToSql()
+		Set("content", postComment.Content).Set("pictures_attached", postComment.PicturesAttached).Where(sq.Eq{"id": postComment.ID}).ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building UpdatePostComment query: %v\n", err)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing UpdatePostComment: %v\n", err)
+	}
 	return err
 }
 
@@ -111,28 +130,31 @@ func (r *pgPostCommentRepository) DeletePostComment(id string) error {
 		Where(sq.Eq{"id": id}).ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building DeletePostComment query: %v\n", err)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing DeletePostComment: %v\n", err)
+	}
 	return err
 }
 
 func (r *pgPostCommentRepository) GetPostCommentByIDWithFields(id string, fields []string) (*PostComment, error) {
 	columns := getPostCommentColumns(fields)
 
-	query, args, err := r.sq.Select(columns...).
-		From("post_comments").
-		Where(sq.Eq{"id": id}).
-		ToSql()
+	query, args, err := r.sq.Select(columns...).From("post_comments").Where(sq.Eq{"id": id}).ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building GetPostCommentByIDWithFields query: %v\n", err)
 		return nil, err
 	}
 
 	var postComment PostComment
 	err = r.db.Get(&postComment, query, args...)
 	if err != nil {
+		fmt.Printf("Error getting post comment by ID with fields: %v\n", err)
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -141,35 +163,46 @@ func (r *pgPostCommentRepository) GetPostCommentByIDWithFields(id string, fields
 	return &postComment, nil
 }
 
-func (r *pgPostCommentRepository) GetPostCommentsByPostIDWithFields(postID string, fields []string) ([]PostComment, error) {
+func (r *pgPostCommentRepository) GetPostCommentsByPostIDWithFields(postID string, fields []string) ([]CommentWithAuthorDB, error) {
+	var comments []CommentWithAuthorDB
 	columns := getPostCommentColumns(fields)
 
-	query, args, err := r.sq.Select(columns...).
-		From("post_comments").
-		Where(sq.Eq{"post_id": postID}).
+	// Add author-related fields to the select clause
+	columns = append(columns, "ua.username AS author_username", "COALESCE(up.profile_picture, '') AS author_profile_picture", "COALESCE(up.avatar, '') AS author_avatar")
+
+	query, args, err := r.sq.Select(columns...).From("post_comments pc").
+		LeftJoin("users_auth ua ON pc.creator_id = ua.id").
+		LeftJoin("users_profile up ON pc.creator_id = up.id").
+		Where(sq.Eq{"pc.post_id": postID}).
 		ToSql()
 
 	if err != nil {
+		fmt.Printf("Error building GetPostCommentsByPostIDWithFields query: %v\n", err)
 		return nil, err
 	}
 
-	var postComments []PostComment
-	err = r.db.Select(&postComments, query, args...)
+	fmt.Printf("Executing GetPostCommentsByPostIDWithFields query: %s with args: %v\n", query, args)
+	err = r.db.Select(&comments, query, args...)
 	if err != nil {
+		fmt.Printf("Error selecting comments with author by post ID with fields: %v\n", err)
 		return nil, err
 	}
-	return postComments, nil
+	fmt.Printf("Successfully fetched %d comments with author by post ID with fields\n", len(comments))
+	return comments, nil
 }
 
 func getPostCommentColumns(fields []string) []string {
 	columnMap := map[string]string{
-		"id":               "id",
-		"postID":           "post_id",
-		"creatorID":        "creator_id",
-		"content":          "content",
-		"picturesAttached": "pictures_attached",
-		"createdAt":        "created_at",
-		"updatedAt":        "updated_at",
+		"id":               "pc.id",
+		"postID":           "pc.post_id",
+		"creatorID":        "pc.creator_id",
+		"content":          "pc.content",
+		"picturesAttached": "pc.pictures_attached",
+		"createdAt":        "pc.created_at",
+		"updatedAt":        "pc.updated_at",
+		"authorUsername":   "ua.username",
+		"authorProfilePic": "up.profile_picture",
+		"authorAvatar":     "up.avatar",
 	}
 
 	var columns []string
@@ -180,7 +213,14 @@ func getPostCommentColumns(fields []string) []string {
 	}
 
 	if len(columns) == 0 {
-		return []string{"id", "post_id", "creator_id", "content", "pictures_attached", "created_at", "updated_at"}
+		// Default columns if no specific fields are requested
+		return []string{
+			"pc.id", "pc.post_id", "pc.creator_id", "pc.content",
+			"pc.pictures_attached", "pc.created_at", "pc.updated_at",
+			"ua.username AS author_username",
+			"COALESCE(up.profile_picture, '') AS author_profile_picture",
+			"COALESCE(up.avatar, '') AS author_avatar",
+		}
 	}
 
 	return columns

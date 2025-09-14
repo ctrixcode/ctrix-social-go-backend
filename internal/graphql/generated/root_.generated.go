@@ -41,7 +41,15 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Author struct {
+		Avatar     func(childComplexity int) int
+		ID         func(childComplexity int) int
+		ProfilePic func(childComplexity int) int
+		Username   func(childComplexity int) int
+	}
+
 	Comment struct {
+		Author           func(childComplexity int) int
 		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		CreatorID        func(childComplexity int) int
@@ -125,6 +133,41 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Author.avatar":
+		if e.complexity.Author.Avatar == nil {
+			break
+		}
+
+		return e.complexity.Author.Avatar(childComplexity), true
+
+	case "Author.id":
+		if e.complexity.Author.ID == nil {
+			break
+		}
+
+		return e.complexity.Author.ID(childComplexity), true
+
+	case "Author.profilePic":
+		if e.complexity.Author.ProfilePic == nil {
+			break
+		}
+
+		return e.complexity.Author.ProfilePic(childComplexity), true
+
+	case "Author.username":
+		if e.complexity.Author.Username == nil {
+			break
+		}
+
+		return e.complexity.Author.Username(childComplexity), true
+
+	case "Comment.author":
+		if e.complexity.Comment.Author == nil {
+			break
+		}
+
+		return e.complexity.Comment.Author(childComplexity), true
 
 	case "Comment.content":
 		if e.complexity.Comment.Content == nil {
@@ -587,7 +630,14 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/comment.graphqls", Input: `type Comment {
+	{Name: "../schema/comment.graphqls", Input: `type Author {
+  id: ID!
+  username: String!
+  profilePic: String!
+  avatar: String!
+}
+
+type Comment {
   id: ID!
   postID: ID!
   creatorID: ID!
@@ -595,6 +645,7 @@ var sources = []*ast.Source{
   picturesAttached: [String!]
   createdAt: String!
   updatedAt: String!
+  author: Author!
 }
 
 extend type Query {

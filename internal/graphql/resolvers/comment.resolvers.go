@@ -59,11 +59,8 @@ func (r *queryResolver) GetCommentsByPostID(ctx context.Context, postID string) 
 	if err != nil {
 		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
 	}
-	if comments == nil {
-		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "comment not found")
-	}
-	if len(comments) == 0 {
-		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "comment not found")
+	if comments == nil || len(comments) == 0 {
+		return nil, nil // Return nil slice if no comments found
 	}
 	var gqlComments []*model.Comment
 
@@ -93,6 +90,12 @@ func (r *queryResolver) GetCommentsByPostID(ctx context.Context, postID string) 
 			PicturesAttached: picturesAttached,
 			CreatedAt:        createdAt,
 			UpdatedAt:        updatedAt,
+			Author: &model.Author{
+				ID:         comment.Author.ID,
+				Username:   comment.Author.Username,
+				ProfilePic: comment.Author.ProfilePic,
+				Avatar:     comment.Author.Avatar,
+			},
 		})
 	}
 	return gqlComments, nil

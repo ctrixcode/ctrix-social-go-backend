@@ -1,3 +1,10 @@
+type Author {
+  id: ID!
+  username: String!
+  profilePic: String!
+  avatar: String!
+}
+
 type Comment {
   id: ID!
   postID: ID!
@@ -6,6 +13,7 @@ type Comment {
   picturesAttached: [String!]
   createdAt: String!
   updatedAt: String!
+  author: Author!
 }
 
 extend type Query {

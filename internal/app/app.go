@@ -12,6 +12,7 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_likes"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_setting"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
@@ -75,6 +76,10 @@ func (app *Application) SetupRoutes() {
 					slog.Error("Failed to setup auth routes", "error", err)
 					os.Exit(1)
 				}
+			})
+
+			rV1.Route("/users", func(r chi.Router) {
+				users_data.Setup(r, app.DB, app.Config)
 			})
 
 			if err := feeds.SetupFeeds(rV1, app.DB); err != nil {

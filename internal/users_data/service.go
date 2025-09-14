@@ -10,6 +10,8 @@ type Service interface {
 	GetDataByIDWithFields(id string, fields []string) (*UsersData, error)
 	UpdateData(data *UsersData) error
 	DeleteData(id string) error
+	Follow(userID string, followerID string) error
+	UnFollow(userID string, followerID string) error
 }
 
 type service struct {
@@ -64,5 +66,25 @@ func (s *service) DeleteData(id string) error {
 		slog.Error("DeleteData: Failed to delete user data in service", "error", err, "data_id", id)
 		return err
 	}
+	return nil
+}
+
+func (s *service) Follow(userID string, followerID string) error {
+	err := s.repo.Follow(userID, followerID)
+	if err != nil {
+		slog.Error("Follow: Failed to follow user in service", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) UnFollow(userID string, followerID string) error {
+	err := s.repo.UnFollow(userID, followerID)
+	if err != nil {
+		slog.Error("UnFollow: Failed to unfollow user in service", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
 	return nil
 }

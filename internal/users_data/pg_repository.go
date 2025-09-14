@@ -2,7 +2,9 @@ package users_data
 
 import (
 	"database/sql"
+	"log/slog"
 
+	"github.com/Masterminds/squirrel"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
@@ -125,4 +127,101 @@ func (r *pgDataRepository) formatFields(fields []string) []string {
 		}
 	}
 	return formatted
+}
+
+func (r *pgDataRepository) Follow(userID string, followerID string) error {
+	query, args, err := r.sq.Update("users_data").
+		Set("followers", squirrel.Expr("array_append(followers, ?)", followerID)).
+		Where(sq.Eq{"id": userID}).
+		Where(squirrel.Expr("? <> ALL(followers)", followerID)).
+		ToSql()
+	if err != nil {
+		slog.Error("Follow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
+	query2, args2, err := r.sq.Update("users_data").
+		Set("followings", squirrel.Expr("array_append(followings, ?)", userID)).
+		Where(sq.Eq{"id": followerID}).
+		Where(squirrel.Expr("? <> ALL(followings)", userID)).
+		ToSql()
+	if err != nil {
+		slog.Error("Follow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		slog.Error("Follow: Failed to begin transaction", "error", err)
+		return err
+	}
+
+	defer tx.Rollback()
+
+	_, err = tx.Exec(query, args...)
+	if err != nil {
+		slog.Error("Follow: Failed to execute SQL query", "error", err, "query", query, "args", args)
+		return err
+	}
+
+	_, err = tx.Exec(query2, args2...)
+	if err != nil {
+		slog.Error("Follow: Failed to execute SQL query", "error", err, "query", query2, "args", args2)
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		slog.Error("Follow: Failed to commit transaction", "error", err)
+		return err
+	}
+
+	return nil
+}
+func (r *pgDataRepository) UnFollow(userID string, followerID string) error {
+	query, args, err := r.sq.Update("users_data").
+		Set("followers", squirrel.Expr("array_remove(followers, ?)", followerID)).
+		Where(sq.Eq{"id": userID}).
+		ToSql()
+	if err != nil {
+		slog.Error("UnFollow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
+	query2, args2, err := r.sq.Update("users_data").
+		Set("followings", squirrel.Expr("array_remove(followings, ?)", userID)).
+		Where(sq.Eq{"id": followerID}).
+		ToSql()
+	if err != nil {
+		slog.Error("UnFollow: Failed to build SQL query", "error", err, "user_id", userID, "follower_id", followerID)
+		return err
+	}
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		slog.Error("UnFollow: Failed to begin transaction", "error", err)
+		return err
+	}
+
+	defer tx.Rollback()
+
+	_, err = tx.Exec(query, args...)
+	if err != nil {
+		slog.Error("UnFollow: Failed to execute SQL query", "error", err, "query", query, "args", args)
+		return err
+	}
+
+	_, err = tx.Exec(query2, args2...)
+	if err != nil {
+		slog.Error("UnFollow: Failed to execute SQL query", "error", err, "query", query2, "args", args2)
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		slog.Error("UnFollow: Failed to commit transaction", "error", err)
+		return err
+	}
+
+	return nil
 }

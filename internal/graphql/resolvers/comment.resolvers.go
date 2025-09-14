@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
@@ -16,7 +15,41 @@ import (
 
 // GetCommentByID is the resolver for the getCommentByID field.
 func (r *queryResolver) GetCommentByID(ctx context.Context, id string) (*model.Comment, error) {
-	panic(fmt.Errorf("not implemented: GetCommentByID - getCommentByID"))
+	requestedFields := helpers.GetRequestedFields(ctx)
+	comment, err := r.CommentService.GetCommentByIDWithFields(id, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+	if comment == nil {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "comment not found")
+	}
+	var createdAt string
+	if comment.CreatedAt != nil {
+		createdAt = comment.CreatedAt.Format(time.RFC3339)
+	}
+	var updatedAt string
+	if comment.UpdatedAt != nil {
+		updatedAt = comment.UpdatedAt.Format(time.RFC3339)
+	}
+	var content string
+	if comment.Content != nil {
+		content = *comment.Content
+	}
+	var picturesAttached []string
+	if comment.PicturesAttached != nil {
+		picturesAttached = comment.PicturesAttached
+	}
+
+	gqlComment := &model.Comment{
+		ID:               comment.ID,
+		PostID:           comment.PostID,
+		CreatorID:        comment.CreatorID,
+		Content:          content,
+		PicturesAttached: picturesAttached,
+		CreatedAt:        createdAt,
+		UpdatedAt:        updatedAt,
+	}
+	return gqlComment, nil
 }
 
 // GetCommentsByPostID is the resolver for the getCommentsByPostID field.

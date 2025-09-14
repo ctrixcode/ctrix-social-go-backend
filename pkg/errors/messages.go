@@ -24,16 +24,22 @@ var (
 	FailedToUpdatePost = ErrorType{Code: "FAILED_TO_UPDATE_POST", Message: "Failed to update post"}
 
 	// Post Like Errors
-	PostAlreadyLiked = ErrorType{Code: "POST_ALREADY_LIKED", Message: "Post already liked by this user"}
-	FailedToLikePost = ErrorType{Code: "FAILED_TO_LIKE_POST", Message: "Failed to like post"}
-	PostNotLiked     = ErrorType{Code: "POST_NOT_LIKED", Message: "Post not liked by this user"}
+	PostAlreadyLiked   = ErrorType{Code: "POST_ALREADY_LIKED", Message: "Post already liked by this user"}
+	FailedToLikePost   = ErrorType{Code: "FAILED_TO_LIKE_POST", Message: "Failed to like post"}
+	PostNotLiked       = ErrorType{Code: "POST_NOT_LIKED", Message: "Post not liked by this user"}
 	FailedToUnlikePost = ErrorType{Code: "FAILED_TO_UNLIKE_POST", Message: "Failed to unlike post"}
 
 	// Post Comment Like Errors
-	CommentAlreadyLiked = ErrorType{Code: "COMMENT_ALREADY_LIKED", Message: "Comment already liked by this user"}
-	FailedToLikeComment = ErrorType{Code: "FAILED_TO_LIKE_COMMENT", Message: "Failed to like comment"}
-	CommentNotLiked     = ErrorType{Code: "COMMENT_NOT_LIKED", Message: "Comment not liked by this user"}
+	CommentAlreadyLiked   = ErrorType{Code: "COMMENT_ALREADY_LIKED", Message: "Comment already liked by this user"}
+	FailedToLikeComment   = ErrorType{Code: "FAILED_TO_LIKE_COMMENT", Message: "Failed to like comment"}
+	CommentNotLiked       = ErrorType{Code: "COMMENT_NOT_LIKED", Message: "Comment not liked by this user"}
 	FailedToUnlikeComment = ErrorType{Code: "FAILED_TO_UNLIKE_COMMENT", Message: "Failed to unlike comment"}
+
+	// Follow/unfollow errors
+	FollowedAlready   = ErrorType{Code: "FOLLOWED_ALREADY", Message: "You are already following this user"}
+	FailedToFollow    = ErrorType{Code: "FAILED_TO_FOLLOW", Message: "Failed to follow user"}
+	UnfollowedAlready = ErrorType{Code: "UNFOLLOWED_ALREADY", Message: "You are already unfollowing this user"}
+	FailedToUnfollow  = ErrorType{Code: "FAILED_TO_UNFOLLOW", Message: "Failed to unfollow user"}
 )
 
 var (

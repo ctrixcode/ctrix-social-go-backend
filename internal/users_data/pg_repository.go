@@ -6,6 +6,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -158,7 +159,7 @@ func (r *pgDataRepository) Follow(userID string, followerID string) error {
 
 	defer tx.Rollback()
 
-	_, err = tx.Exec(query, args...)
+	result1, err := tx.Exec(query, args...)
 	if err != nil {
 		slog.Error("Follow: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		return err
@@ -168,6 +169,12 @@ func (r *pgDataRepository) Follow(userID string, followerID string) error {
 	if err != nil {
 		slog.Error("Follow: Failed to execute SQL query", "error", err, "query", query2, "args", args2)
 		return err
+	}
+	if rows, err := result1.RowsAffected(); err == nil {
+		if rows == 0 {
+			slog.Error("Follow: Failed to execute SQL query", "error", err, "query", query, "args", args)
+			return errors.BadRequestError(errors.FollowedAlready)
+		}
 	}
 
 	err = tx.Commit()

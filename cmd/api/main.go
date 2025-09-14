@@ -1,30 +1,38 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/app"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/logger"
 )
 
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+		slog.Error("Failed to load configuration", "error", err)
+		os.Exit(1)
 	}
+
+	logger.InitLogger(cfg.Log)
 
 	application, err := app.NewApplication(cfg)
 	if err != nil {
-		log.Fatalf("Failed to initialize application: %v", err)
+		slog.Error("Failed to initialize application", "error", err)
+		os.Exit(1)
 	}
 
 	application.SetupRoutes()
 	if err := graphql.SetupGraphQL(application.Router, application.DB, cfg); err != nil {
-		log.Fatalf("Failed to setup GraphQL: %v", err)
+		slog.Error("Failed to setup GraphQL", "error", err)
+		os.Exit(1)
 	}
 
 	if err := application.Serve(); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+		slog.Error("Server failed to start", "error", err)
+		os.Exit(1)
 	}
 }

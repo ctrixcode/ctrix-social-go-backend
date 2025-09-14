@@ -13,6 +13,7 @@ type Config struct {
 	Database   DatabaseConfig
 	JWT        JWTConfig
 	Cloudinary CloudinaryConfig
+	Log        LogConfig
 }
 
 // ServerConfig holds server-specific configurations.
@@ -42,6 +43,12 @@ type CloudinaryConfig struct {
 	APISecret string
 }
 
+// LogConfig holds logging-specific configurations.
+type LogConfig struct {
+	Level  string
+	Format string
+}
+
 // LoadConfig loads all configurations from environment variables.
 func LoadConfig() (*Config, error) {
 	// Load the .env file in the current directory
@@ -67,8 +74,11 @@ func LoadConfig() (*Config, error) {
 		},
 		Cloudinary: CloudinaryConfig{
 			CloudName: getEnv("CLOUDINARY_CLOUD_NAME", ""),
-			APIKey:    getEnv("CLOUDINARY_API_KEY", ""),
-			APISecret: getEnv("CLOUDINARY_API_SECRET", ""),
+			APIKey:    getEnv("CLOUDINARY_API_KEY", ""),			APISecret: getEnv("CLOUDINARY_API_SECRET", ""),
+		},
+		Log: LogConfig{
+			Level:  getEnv("LOG_LEVEL", "info"), // Default to info level
+			Format: getEnv("LOG_FORMAT", "json"), // Default to JSON format
 		},
 	}
 

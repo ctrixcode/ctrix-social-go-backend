@@ -2,7 +2,7 @@ package posts
 
 import (
 	"database/sql"
-	"fmt"
+	"log/slog"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -28,10 +28,14 @@ func (r *pgPostRepository) CreatePost(post *Post) error {
 		ToSql()
 
 	if err != nil {
+		slog.Error("CreatePost: Failed to build SQL query", "error", err, "post", post)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		slog.Error("CreatePost: Failed to execute SQL query", "error", err, "query", query, "args", args)
+	}
 	return err
 }
 
@@ -49,14 +53,17 @@ func (r *pgPostRepository) GetPostByIDWithFields(id string, fields []string) (*P
 	query, args, err := builder.ToSql()
 
 	if err != nil {
+		slog.Error("GetPostByIDWithFields: Failed to build SQL query", "error", err, "post_id", id, "fields", fields)
 		return nil, err
 	}
 
 	err = r.db.Get(&post, query, args...)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			slog.Debug("GetPostByIDWithFields: No rows found", "post_id", id)
 			return nil, nil
 		}
+		slog.Error("GetPostByIDWithFields: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		return nil, err
 	}
 	return &post, nil
@@ -72,10 +79,14 @@ func (r *pgPostRepository) UpdatePost(post *Post) error {
 		ToSql()
 
 	if err != nil {
+		slog.Error("UpdatePost: Failed to build SQL query", "error", err, "post", post)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		slog.Error("UpdatePost: Failed to execute SQL query", "error", err, "query", query, "args", args)
+	}
 	return err
 }
 
@@ -91,19 +102,20 @@ func (r *pgPostRepository) GetPostsByCreatorIDWithFields(creatorID string, field
 
 	query, args, err := builder.ToSql()
 	if err != nil {
+		slog.Error("GetPostsByCreatorIDWithFields: Failed to build SQL query", "error", err, "creator_id", creatorID, "fields", fields)
 		return nil, err
 	}
 
 	err = r.db.Select(&posts, query, args...)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println("DEBUG: GetPostsByCreatorIDWithFields - No rows, returning empty slice")
+			slog.Debug("GetPostsByCreatorIDWithFields: No rows, returning empty slice", "creator_id", creatorID)
 			return []Post{}, nil
 		}
-		fmt.Printf("DEBUG: GetPostsByCreatorIDWithFields - Error: %v\n", err)
+		slog.Error("GetPostsByCreatorIDWithFields: Failed to execute SQL query", "error", err, "query", query, "args", args)
 		return nil, err
 	}
-	fmt.Printf("DEBUG: GetPostsByCreatorIDWithFields - Posts found: %d\n", len(posts))
+	slog.Debug("GetPostsByCreatorIDWithFields: Posts found", "count", len(posts), "creator_id", creatorID)
 	return posts, nil
 }
 
@@ -113,10 +125,14 @@ func (r *pgPostRepository) DeletePost(id string) error {
 		Where(sq.Eq{"id": id}).ToSql()
 
 	if err != nil {
+		slog.Error("DeletePost: Failed to build SQL query", "error", err, "post_id", id)
 		return err
 	}
 
 	_, err = r.db.Exec(query, args...)
+	if err != nil {
+		slog.Error("DeletePost: Failed to execute SQL query", "error", err, "query", query, "args", args)
+	}
 	return err
 }
 

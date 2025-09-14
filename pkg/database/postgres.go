@@ -2,7 +2,8 @@ package database
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
 	"github.com/jmoiron/sqlx" // Changed from "database/sql"
@@ -19,14 +20,16 @@ func NewDBConnection(cfg config.DatabaseConfig) *sqlx.DB {
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
 	db, err := sqlx.Open("postgres", connString)
 	if err != nil {
-		log.Fatalf("Failed to open database connection: %v", err)
+		slog.Error("Failed to open database connection", "error", err)
+		os.Exit(1)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		slog.Error("Failed to connect to database", "error", err)
+		os.Exit(1)
 	} else {
-		fmt.Println("DB Connection Established Successfully!!!")
+		slog.Info("DB Connection Established Successfully!!!")
 	}
 
 	dbInstance = db
@@ -38,14 +41,16 @@ func CreateDB(cfg config.DatabaseConfig) {
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.SSLMode)
 	db, err := sqlx.Open("postgres", connString)
 	if err != nil {
-		log.Fatalf("Failed to open database connection for create: %v", err)
+		slog.Error("Failed to open database connection for create", "error", err)
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", cfg.DBName))
 	if err != nil {
-		log.Fatalf("Failed to create database %s: %v", cfg.DBName, err)
+		slog.Error("Failed to create database", "db_name", cfg.DBName, "error", err)
+		os.Exit(1)
 	}
 
-	fmt.Println("DB Created Successfully!")
+	slog.Info("DB Created Successfully!")
 }

@@ -3,6 +3,7 @@ package posts
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"mime/multipart"
 	"path/filepath"
 	"strings"
@@ -41,6 +42,7 @@ func NewService(repo PostRepository, cld *cloudinary.Service, authRepo auth.Auth
 func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
 	user, err := s.authRepo.GetUserByID(post.CreatorID)
 	if err != nil {
+		slog.Error("CreatePost: Failed to get user for public_id generation", "error", err, "creator_id", post.CreatorID)
 		return fmt.Errorf("failed to get user for public_id generation: %w", err)
 	}
 
@@ -48,6 +50,7 @@ func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
 	for _, fileHeader := range files {
 		file, err := fileHeader.Open()
 		if err != nil {
+			slog.Error("CreatePost: Failed to open file", "error", err, "filename", fileHeader.Filename)
 			return fmt.Errorf("failed to open file: %w", err)
 		}
 		defer file.Close()
@@ -62,6 +65,7 @@ func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
 
 		uploadResult, err := s.cld.UploadFile(context.Background(), file, uploader.UploadParams{PublicID: publicID})
 		if err != nil {
+			slog.Error("CreatePost: Failed to upload file to cloudinary", "error", err, "public_id", publicID)
 			return fmt.Errorf("failed to upload file to cloudinary: %w", err)
 		}
 		urls = append(urls, uploadResult.SecureURL)
@@ -70,6 +74,7 @@ func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
 
 	err = s.repo.CreatePost(post)
 	if err != nil {
+		slog.Error("CreatePost: Failed to create post in repository", "error", err, "creator_id", post.CreatorID)
 		return fmt.Errorf("failed to create post: %w", err)
 	}
 	return nil
@@ -78,6 +83,7 @@ func (s *service) CreatePost(post *Post, files []*multipart.FileHeader) error {
 func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
 	user, err := s.authRepo.GetUserByID(post.CreatorID)
 	if err != nil {
+		slog.Error("UpdatePost: Failed to get user for public_id generation", "error", err, "creator_id", post.CreatorID)
 		return fmt.Errorf("failed to get user for public_id generation: %w", err)
 	}
 
@@ -86,6 +92,7 @@ func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
 	for _, fileHeader := range files {
 		file, err := fileHeader.Open()
 		if err != nil {
+			slog.Error("UpdatePost: Failed to open file", "error", err, "filename", fileHeader.Filename)
 			return fmt.Errorf("failed to open file: %w", err)
 		}
 		defer file.Close()
@@ -100,6 +107,7 @@ func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
 
 		uploadResult, err := s.cld.UploadFile(context.Background(), file, uploader.UploadParams{PublicID: publicID})
 		if err != nil {
+			slog.Error("UpdatePost: Failed to upload file to cloudinary", "error", err, "public_id", publicID)
 			return fmt.Errorf("failed to upload file to cloudinary: %w", err)
 		}
 		urls = append(urls, uploadResult.SecureURL)
@@ -112,6 +120,7 @@ func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
 
 	err = s.repo.UpdatePost(post)
 	if err != nil {
+		slog.Error("UpdatePost: Failed to update post in repository", "error", err, "post_id", post.ID)
 		return fmt.Errorf("failed to update post: %w", err)
 	}
 	return nil
@@ -120,6 +129,7 @@ func (s *service) UpdatePost(post *Post, files []*multipart.FileHeader) error {
 func (s *service) GetPostByID(id string) (*Post, error) {
 	post, err := s.repo.GetPostByID(id)
 	if err != nil {
+		slog.Error("GetPostByID: Failed to get post from repository", "error", err, "post_id", id)
 		return nil, fmt.Errorf("failed to get post by ID: %w", err)
 	}
 	return post, nil
@@ -128,6 +138,7 @@ func (s *service) GetPostByID(id string) (*Post, error) {
 func (s *service) GetPostByIDWithFields(id string, fields []string) (*Post, error) {
 	post, err := s.repo.GetPostByIDWithFields(id, fields)
 	if err != nil {
+		slog.Error("GetPostByIDWithFields: Failed to get post from repository", "error", err, "post_id", id, "fields", fields)
 		return nil, fmt.Errorf("failed to get post by ID with fields: %w", err)
 	}
 	return post, nil
@@ -136,16 +147,20 @@ func (s *service) GetPostByIDWithFields(id string, fields []string) (*Post, erro
 func (s *service) DeletePost(id, userID string) error {
 	post, err := s.repo.GetPostByID(id)
 	if err != nil {
+		slog.Error("DeletePost: Failed to get post from repository", "error", err, "post_id", id)
 		return errors.NotFoundError(errors.PostNotFound, err.Error())
 	}
 	if post == nil {
+		slog.Warn("DeletePost: Post not found", "post_id", id)
 		return errors.NotFoundError(errors.PostNotFound)
 	}
 	if post.CreatorID != userID {
+		slog.Warn("DeletePost: Unauthorized attempt to delete post", "post_id", id, "user_id", userID, "creator_id", post.CreatorID)
 		return errors.AuthenticationError(errors.ErrUnauthorized)
 	}
 	err = s.repo.DeletePost(id)
 	if err != nil {
+		slog.Error("DeletePost: Failed to delete post in repository", "error", err, "post_id", id)
 		return fmt.Errorf("failed to delete post: %w", err)
 	}
 	return nil
@@ -154,6 +169,7 @@ func (s *service) DeletePost(id, userID string) error {
 func (s *service) GetPostsByCreatorID(creatorID string) ([]Post, error) {
 	posts, err := s.repo.GetPostsByCreatorID(creatorID)
 	if err != nil {
+		slog.Error("GetPostsByCreatorID: Failed to get posts from repository", "error", err, "creator_id", creatorID)
 		return nil, fmt.Errorf("failed to get posts by creator ID: %w", err)
 	}
 	return posts, nil
@@ -162,6 +178,7 @@ func (s *service) GetPostsByCreatorID(creatorID string) ([]Post, error) {
 func (s *service) GetPostsByCreatorIDWithFields(creatorID string, fields []string) ([]Post, error) {
 	posts, err := s.repo.GetPostsByCreatorIDWithFields(creatorID, fields)
 	if err != nil {
+		slog.Error("GetPostsByCreatorIDWithFields: Failed to get posts from repository", "error", err, "creator_id", creatorID, "fields", fields)
 		return nil, fmt.Errorf("failed to get posts by creator ID with fields: %w", err)
 	}
 	return posts, nil

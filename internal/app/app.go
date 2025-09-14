@@ -2,7 +2,9 @@ package app
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/feeds" // Added feeds import
@@ -70,39 +72,47 @@ func (app *Application) SetupRoutes() {
 			// /v1/auth routes
 			rV1.Route("/auth", func(rAuth chi.Router) {
 				if err := auth.SetupAuth(rAuth, app.DB, app.Config); err != nil {
-					panic(err) // Handle error during setup
+					slog.Error("Failed to setup auth routes", "error", err)
+					os.Exit(1)
 				}
 			})
 
-			if err := feeds.SetupFeeds(rV1, app.DB); err != nil { // Added feeds setup
-				panic(err) // Handle error during setup
+			if err := feeds.SetupFeeds(rV1, app.DB); err != nil {
+				slog.Error("Failed to setup feeds routes", "error", err)
+				os.Exit(1)
 			}
 			rV1.Route("/upload", func(rUpload chi.Router) {
 				if err := users_profile.SetupUserProfile(rUpload, app.DB, app.Config); err != nil {
-					panic(err) // Handle error during setup
+					slog.Error("Failed to setup user profile routes", "error", err)
+					os.Exit(1)
 				}
 			})
 			rV1.Route("/post", func(rPosts chi.Router) {
 				jwtService, err := jwt.NewJWTService(app.Config.JWT)
 				if err != nil {
-					panic(err)
+					slog.Error("Failed to create JWT service", "error", err)
+					os.Exit(1)
 				}
 				rPosts.Use(customMiddleware.AuthMiddleware(jwtService))
 				if err := posts.SetupPosts(rPosts, app.DB, app.CloudinaryService); err != nil {
-					panic(err) // Handle error during setup
+					slog.Error("Failed to setup posts routes", "error", err)
+					os.Exit(1)
 				}
 				rPosts.Route("/like", func(rPostLikes chi.Router) {
 					if err := post_likes.SetupPostLikes(rPostLikes, app.DB); err != nil {
-						panic(err)
+						slog.Error("Failed to setup post likes routes", "error", err)
+						os.Exit(1)
 					}
 				})
 				rPosts.Route("/comment", func(rPostComments chi.Router) {
 					if err := post_comments.SetupPostComments(rPostComments, app.DB); err != nil {
-						panic(err)
+						slog.Error("Failed to setup post comments routes", "error", err)
+						os.Exit(1)
 					}
 					rPostComments.Route("/like", func(rPostCommentLikes chi.Router) {
 						if err := post_comment_likes.SetupPostCommentLikes(rPostCommentLikes, app.DB); err != nil {
-							panic(err)
+							slog.Error("Failed to setup post comment likes routes", "error", err)
+							os.Exit(1)
 						}
 					})
 				})
@@ -119,6 +129,6 @@ func (app *Application) SetupRoutes() {
 // Serve starts the HTTP server
 func (app *Application) Serve() error {
 	port := app.Config.Server.Port
-	fmt.Printf("Server starting on port %s\n", port)
+	slog.Info("Server starting", "port", port)
 	return http.ListenAndServe(":"+port, app.Router)
 }

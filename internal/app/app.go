@@ -69,7 +69,7 @@ func (app *Application) SetupRoutes() {
 		r.Route("/v1", func(rV1 chi.Router) {
 			// /v1/auth routes
 			rV1.Route("/auth", func(rAuth chi.Router) {
-				if err := auth.SetupAuth(rAuth, app.DB); err != nil {
+				if err := auth.SetupAuth(rAuth, app.DB, app.Config); err != nil {
 					panic(err) // Handle error during setup
 				}
 			})
@@ -78,7 +78,7 @@ func (app *Application) SetupRoutes() {
 				panic(err) // Handle error during setup
 			}
 			rV1.Route("/upload", func(rUpload chi.Router) {
-				if err := users_profile.SetupUserProfile(rUpload, app.DB); err != nil {
+				if err := users_profile.SetupUserProfile(rUpload, app.DB, app.Config); err != nil {
 					panic(err) // Handle error during setup
 				}
 			})

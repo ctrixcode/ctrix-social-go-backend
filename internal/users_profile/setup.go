@@ -10,8 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func SetupUserProfile(router chi.Router, db *sqlx.DB) error {
-	cloudinaryService, err := cloudinary.NewService(config.LoadCloudinaryConfig())
+func SetupUserProfile(router chi.Router, db *sqlx.DB, cfg *config.Config) error {
+	cloudinaryService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
 		fmt.Println(err)
 		return errors.InternalServerError(errors.ErrSomethingWentWrong)

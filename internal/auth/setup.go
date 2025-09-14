@@ -2,18 +2,19 @@ package auth
 
 import (
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/auth_session_tokens"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
 )
 
 // SetupAuth initializes and registers authentication routes.
-func SetupAuth(r chi.Router, db *sqlx.DB) error {
+func SetupAuth(r chi.Router, db *sqlx.DB, cfg *config.Config) error {
 	authRepo := NewRepository(db)
 	authSessionTokenRepo := auth_session_tokens.NewRepository(db)
 	authSessionTokenService := auth_session_tokens.NewService(authSessionTokenRepo)
 
-	jwtService, err := jwt.NewJWTService()
+	jwtService, err := jwt.NewJWTService(cfg.JWT)
 	if err != nil {
 		return err
 	}

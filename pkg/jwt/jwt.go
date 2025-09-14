@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/security"
 )
 
@@ -37,7 +38,7 @@ func NewJWTService(cfg config.JWTConfig) (*JWTService, error) {
 	return &JWTService{
 		privateKey: privateKey,
 		publicKey:  publicKey,
-	},
+	}, nil
 }
 
 type RefreshTokenInfo struct {

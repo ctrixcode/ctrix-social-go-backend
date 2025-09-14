@@ -70,6 +70,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetCommentByID      func(childComplexity int, id string) int
 		GetCommentsByPostID func(childComplexity int, postID string) int
+		GetPostsByCreatorID func(childComplexity int, creatorID string) int
 		Hello               func(childComplexity int) int
 		MyPosts             func(childComplexity int) int
 		MyUserData          func(childComplexity int) int
@@ -286,6 +287,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetCommentsByPostID(childComplexity, args["postID"].(string)), true
+
+	case "Query.getPostsByCreatorID":
+		if e.complexity.Query.GetPostsByCreatorID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPostsByCreatorID_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPostsByCreatorID(childComplexity, args["creatorID"].(string)), true
 
 	case "Query.hello":
 		if e.complexity.Query.Hello == nil {
@@ -587,6 +600,7 @@ extend type Query {
 extend type Query {
   post(id: ID!): Post
   myPosts: [Post!]
+  getPostsByCreatorID(creatorID: ID!): [Post!]
 }
 `, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `type Query {

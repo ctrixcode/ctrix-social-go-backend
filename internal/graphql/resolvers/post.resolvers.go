@@ -11,6 +11,7 @@ import (
 
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/model"
+	pkgErrors "github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 )
 
 // Post is the resolver for the post field.
@@ -79,5 +80,39 @@ func (r *queryResolver) MyPosts(ctx context.Context) ([]*model.Post, error) {
 		})
 	}
 
+	return gqlPosts, nil
+}
+
+// GetPostsByCreatorID is the resolver for the getPostsByCreatorID field.
+func (r *queryResolver) GetPostsByCreatorID(ctx context.Context, creatorID string) ([]*model.Post, error) {
+	requestedFields := helpers.GetRequestedFields(ctx)
+	posts, err := r.PostService.GetPostsByCreatorIDWithFields(creatorID, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+	if posts == nil {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "post not found")
+	}
+
+	var gqlPosts []*model.Post
+	for _, post := range posts {
+		var createdAt string
+		if post.CreatedAt != nil {
+			createdAt = post.CreatedAt.Format(time.RFC3339)
+		}
+		var updatedAt string
+		if post.UpdatedAt != nil {
+			updatedAt = post.UpdatedAt.Format(time.RFC3339)
+		}
+
+		gqlPosts = append(gqlPosts, &model.Post{
+			ID:               post.ID,
+			GroupID:          post.GroupID,
+			TextContent:      post.TextContent,
+			PicturesAttached: post.PicturesAttached,
+			CreatedAt:        createdAt,
+			UpdatedAt:        updatedAt,
+		})
+	}
 	return gqlPosts, nil
 }

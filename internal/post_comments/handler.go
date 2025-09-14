@@ -13,11 +13,11 @@ import (
 )
 
 type PostCommentHandler struct {
-	service   PostCommentService
+	service   Service
 	validator *validator.Validate
 }
 
-func NewPostCommentHandler(service PostCommentService) *PostCommentHandler {
+func NewPostCommentHandler(service Service) *PostCommentHandler {
 	return &PostCommentHandler{
 		service:   service,
 		validator: validator.New(),

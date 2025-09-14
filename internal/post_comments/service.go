@@ -5,17 +5,19 @@ import (
 	"github.com/google/uuid"
 )
 
-type PostCommentService interface {
+type Service interface {
 	CreateComment(req *CreateCommentRequest) (*PostComment, error)
 	UpdateCommentByID(id uuid.UUID, userID string, req *UpdateCommentRequest) (*PostComment, error)
 	DeleteComment(id uuid.UUID, userID string) error
+	GetCommentByIDWithFields(id string, fields []string) (*PostComment, error)
+	GetCommentsByPostIDWithFields(postID string, fields []string) ([]PostComment, error)
 }
 
 type postCommentService struct {
 	repo PostCommentRepository
 }
 
-func NewPostCommentService(repo PostCommentRepository) PostCommentService {
+func NewPostCommentService(repo PostCommentRepository) Service {
 	return &postCommentService{
 		repo: repo,
 	}
@@ -75,4 +77,12 @@ func (s *postCommentService) DeleteComment(id uuid.UUID, userID string) error {
 		return errors.InternalServerError(errors.ErrInternalServerError)
 	}
 	return nil
+}
+
+func (s *postCommentService) GetCommentByIDWithFields(id string, fields []string) (*PostComment, error) {
+	return s.repo.GetPostCommentByIDWithFields(id, fields)
+}
+
+func (s *postCommentService) GetCommentsByPostIDWithFields(postID string, fields []string) ([]PostComment, error) {
+	return s.repo.GetPostCommentsByPostIDWithFields(postID, fields)
 }

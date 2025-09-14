@@ -7,4 +7,6 @@ type PostCommentRepository interface {
 	GetPostCommentsByCreatorID(creatorID string) ([]PostComment, error)
 	UpdatePostComment(postComment *PostComment) error
 	DeletePostComment(id string) error
+	GetPostCommentByIDWithFields(id string, fields []string) (*PostComment, error)
+	GetPostCommentsByPostIDWithFields(postID string, fields []string) ([]PostComment, error)
 }

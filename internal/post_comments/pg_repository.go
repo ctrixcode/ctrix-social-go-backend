@@ -117,3 +117,71 @@ func (r *pgPostCommentRepository) DeletePostComment(id string) error {
 	_, err = r.db.Exec(query, args...)
 	return err
 }
+
+func (r *pgPostCommentRepository) GetPostCommentByIDWithFields(id string, fields []string) (*PostComment, error) {
+	columns := getPostCommentColumns(fields)
+
+	query, args, err := r.sq.Select(columns...).
+		From("post_comments").
+		Where(sq.Eq{"id": id}).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var postComment PostComment
+	err = r.db.Get(&postComment, query, args...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &postComment, nil
+}
+
+func (r *pgPostCommentRepository) GetPostCommentsByPostIDWithFields(postID string, fields []string) ([]PostComment, error) {
+	columns := getPostCommentColumns(fields)
+
+	query, args, err := r.sq.Select(columns...).
+		From("post_comments").
+		Where(sq.Eq{"post_id": postID}).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var postComments []PostComment
+	err = r.db.Select(&postComments, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return postComments, nil
+}
+
+func getPostCommentColumns(fields []string) []string {
+	columnMap := map[string]string{
+		"id":               "id",
+		"postID":           "post_id",
+		"creatorID":        "creator_id",
+		"content":          "content",
+		"picturesAttached": "pictures_attached",
+		"createdAt":        "created_at",
+		"updatedAt":        "updated_at",
+	}
+
+	var columns []string
+	for _, field := range fields {
+		if col, ok := columnMap[field]; ok {
+			columns = append(columns, col)
+		}
+	}
+
+	if len(columns) == 0 {
+		return []string{"id", "post_id", "creator_id", "content", "pictures_attached", "created_at", "updated_at"}
+	}
+
+	return columns
+}

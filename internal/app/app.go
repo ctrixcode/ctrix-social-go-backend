@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -18,6 +17,7 @@ import (
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/cloudinary"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/config"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/database"
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	customMiddleware "github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 	"github.com/go-chi/chi/v5"
@@ -47,7 +47,7 @@ func NewApplication(cfg *config.Config) (*Application, error) {
 	// Initialize Cloudinary service
 	cldService, err := cloudinary.NewService(cfg.Cloudinary)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize cloudinary service: %w", err)
+		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 	app.CloudinaryService = cldService
 

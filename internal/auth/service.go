@@ -75,7 +75,12 @@ func (s *authService) Register(req *RegisterRequest, userAgent string) (*AuthRes
 	}
 
 	// Store refresh token in DB
-	if err := s.sessionTokenService.CreateSessionToken(userAuth.ID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(
+		userAuth.ID,
+		refreshTokenInfo.JTI,
+		refreshTokenInfo.ExpiresAt,
+		sql.NullString{String: userAgent, Valid: userAgent != ""},
+	); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -111,7 +116,12 @@ func (s *authService) Login(req *LoginRequest, userAgent string) (*AuthResponse,
 	}
 
 	// Store refresh token in DB
-	if err := s.sessionTokenService.CreateSessionToken(userAuth.ID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(
+		userAuth.ID,
+		refreshTokenInfo.JTI,
+		refreshTokenInfo.ExpiresAt,
+		sql.NullString{String: userAgent, Valid: userAgent != ""},
+	); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 
@@ -154,7 +164,12 @@ func (s *authService) RefreshToken(req *RefreshTokenRequest, userAgent string) (
 	}
 
 	// Store new refresh token in DB
-	if err := s.sessionTokenService.CreateSessionToken(claims.UserID, refreshTokenInfo.JTI, refreshTokenInfo.ExpiresAt, &userAgent); err != nil {
+	if err := s.sessionTokenService.CreateSessionToken(
+		claims.UserID,
+		refreshTokenInfo.JTI,
+		refreshTokenInfo.ExpiresAt,
+		sql.NullString{String: userAgent, Valid: userAgent != ""},
+	); err != nil {
 		return nil, errors.InternalServerError(errors.ErrInternalServerError, err.Error())
 	}
 

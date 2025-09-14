@@ -1,11 +1,12 @@
 package auth_session_tokens
 
 import (
+	"database/sql"
 	"time"
 )
 
 type Service interface {
-	CreateSessionToken(userID string, jti string, expiresAt time.Time, userAgent *string) error
+	CreateSessionToken(userID string, jti string, expiresAt time.Time, userAgent sql.NullString) error
 	GetSessionTokenByJTI(jti string) (*AuthSessionToken, error)
 	MarkSessionTokenAsUsed(jti string) error
 }
@@ -20,7 +21,7 @@ func NewService(repo AuthSessionTokenRepository) Service {
 	}
 }
 
-func (s *service) CreateSessionToken(userID string, jti string, expiresAt time.Time, userAgent *string) error {
+func (s *service) CreateSessionToken(userID string, jti string, expiresAt time.Time, userAgent sql.NullString) error {
 	sessionToken := &AuthSessionToken{
 		UserID:    userID,
 		JTI:       jti,

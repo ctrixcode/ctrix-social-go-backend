@@ -1,6 +1,7 @@
 package resolvers
 
 import (
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
@@ -16,4 +17,5 @@ type Resolver struct {
 	UserDataService    users_data.Service
 	PostService        posts.Service
 	UserProfileService users_profile.Service
+	CommentService     post_comments.Service
 }

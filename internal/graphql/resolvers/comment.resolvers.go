@@ -7,8 +7,11 @@ package resolvers
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/helpers"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/model"
+	pkgErrors "github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
 )
 
 // GetCommentByID is the resolver for the getCommentByID field.
@@ -18,5 +21,46 @@ func (r *queryResolver) GetCommentByID(ctx context.Context, id string) (*model.C
 
 // GetCommentsByPostID is the resolver for the getCommentsByPostID field.
 func (r *queryResolver) GetCommentsByPostID(ctx context.Context, postID string) ([]*model.Comment, error) {
-	panic(fmt.Errorf("not implemented: GetCommentsByPostID - getCommentsByPostID"))
+	requestedFields := helpers.GetRequestedFields(ctx)
+	comments, err := r.CommentService.GetCommentsByPostIDWithFields(postID, requestedFields)
+	if err != nil {
+		return nil, pkgErrors.InternalServerError(pkgErrors.ErrSomethingWentWrong, err.Error())
+	}
+	if comments == nil {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "comment not found")
+	}
+	if len(comments) == 0 {
+		return nil, pkgErrors.NotFoundError(pkgErrors.ErrNotFound, "comment not found")
+	}
+	var gqlComments []*model.Comment
+
+	for _, comment := range comments {
+		var createdAt string
+		if comment.CreatedAt != nil {
+			createdAt = comment.CreatedAt.Format(time.RFC3339)
+		}
+		var updatedAt string
+		if comment.UpdatedAt != nil {
+			updatedAt = comment.UpdatedAt.Format(time.RFC3339)
+		}
+		var content string
+		if comment.Content != nil {
+			content = *comment.Content
+		}
+		var picturesAttached []string
+		if comment.PicturesAttached != nil {
+			picturesAttached = comment.PicturesAttached
+		}
+
+		gqlComments = append(gqlComments, &model.Comment{
+			ID:               comment.ID,
+			PostID:           comment.PostID,
+			CreatorID:        comment.CreatorID,
+			Content:          content,
+			PicturesAttached: picturesAttached,
+			CreatedAt:        createdAt,
+			UpdatedAt:        updatedAt,
+		})
+	}
+	return gqlComments, nil
 }

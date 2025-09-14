@@ -7,6 +7,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/generated"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/graphql/resolvers"
+	"github.com/ctrixcode/ctrix-social-go-backend/internal/post_comments"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/posts"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_data"
 	"github.com/ctrixcode/ctrix-social-go-backend/internal/users_profile"
@@ -40,6 +41,10 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 	postRepo := posts.NewRepository(db)
 	postService := posts.NewService(postRepo)
 
+	// Initialize PostCommentService
+	postCommentRepo := post_comments.NewRepository(db)
+	postCommentService := post_comments.NewPostCommentService(postCommentRepo)
+
 	// Create a new GraphQL server
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &resolvers.Resolver{
@@ -47,6 +52,7 @@ func SetupGraphQL(r *chi.Mux, db *sqlx.DB) error {
 			UserDataService:    userDataService,
 			PostService:        postService,
 			UserProfileService: userProfileService,
+			CommentService:     postCommentService,
 		},
 	}))
 

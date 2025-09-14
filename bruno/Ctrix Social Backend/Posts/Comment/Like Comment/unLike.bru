@@ -1,0 +1,15 @@
+meta {
+  name: unLike
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{baseURL}}/post/comment/like/commentID
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

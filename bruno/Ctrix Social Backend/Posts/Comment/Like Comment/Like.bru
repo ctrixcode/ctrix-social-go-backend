@@ -1,0 +1,15 @@
+meta {
+  name: Like
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/post/comment/like/commentID
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

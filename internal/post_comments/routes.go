@@ -1,11 +1,18 @@
 package post_comments
 
 import (
+	"github.com/ctrixcode/ctrix-social-go-backend/pkg/jwt"
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
 func RegisterPostCommentRoutes(router chi.Router, handler *PostCommentHandler) {
+	jwtService, err := jwt.NewJWTService()
+	if err != nil {
+		panic(err)
+	}
+	router.Use(middleware.AuthMiddleware(jwtService))
+
 	router.Post("/", middleware.WrapHandler(handler.CreateComment))
 	router.Put("/{id}", middleware.WrapHandler(handler.UpdateCommentByID))
 	router.Delete("/{id}", middleware.WrapHandler(handler.DeleteCommentByID))

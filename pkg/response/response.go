@@ -48,8 +48,8 @@ func JSONError(w http.ResponseWriter, err error) {
 
 	resp := ErrorResponse{
 		Success: false,
-		Code:    apiErr.Type.Code,
-		Message: apiErr.GetMessage(),
+		Code:    apiErr.Type,
+		Message: apiErr.Message,
 		Details: apiErr.Details,
 	}
 

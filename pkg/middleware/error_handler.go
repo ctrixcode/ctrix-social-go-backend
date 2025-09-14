@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/ctrixcode/ctrix-social-go-backend/pkg/errors"
@@ -18,7 +18,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 		defer func() {
 			if rvr := recover(); rvr != nil {
 				// Log the panic for internal debugging
-				log.Printf("PANIC: %v", rvr)
+				slog.Error("Panic caught", "rvr", rvr)
 
 				// Send a generic internal server error response to the client
 				apiErr := errors.InternalServerError(errors.ErrInternalServerError)
@@ -47,14 +47,13 @@ func HandleError(w http.ResponseWriter, err error) {
 	apiErr, ok := err.(*errors.APIError)
 	if !ok {
 		// If it's not a custom APIError, treat it as an internal server error
-		apiErr = errors.InternalServerError(errors.ErrInternalServerError, err.Error())
+		apiErr = errors.InternalServerError(errors.ErrInternalServerError)
 	}
 
 	// Log internal server errors (non-operational errors)
 	if !apiErr.IsOperational {
-		log.Printf("Internal Server Error: %s (Details: %v)", apiErr.Error(), apiErr.Details)
-		// For client, hide specific details for non-operational errors
-		apiErr = errors.InternalServerError(errors.ErrInternalServerError) // Generic message
+		slog.Error("Internal Server Error: %s (Details: %v)", apiErr.Error(), apiErr.Details)
+		apiErr = errors.InternalServerError(errors.ErrSomethingWentWrong)
 	}
 
 	response.JSONError(w, apiErr)

@@ -1,0 +1,15 @@
+meta {
+  name: Follow
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseURL}}/users/follow/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseURL}}/post/4e7af693-0fed-4989-86f1-4a7479bbc3ec
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+  //   "group_id": "",
+    "text_content": "test 3"
+  //   "pictures_attached": []
+  }
+}
+
+settings {
+  encodeUrl: true
+}

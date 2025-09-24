@@ -1,0 +1,21 @@
+meta {
+  name: Logout
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseURL}}/auth/logout
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "refreshToken": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaXNzIjoiY3RyaXgtc29jaWFsLWdvbGFuZy1iYWNrZW5kIiwic3ViIjoiYWNjZXNzLXRva2VuIiwiYXVkIjpbIjIiXSwiZXhwIjoxNzU3NzUyNzk5LCJuYmYiOjE3NTc3NTE4OTksImlhdCI6MTc1Nzc1MTg5OX0.0XYe2rDVjHkW21IGHPY7NjEBtYKFB2D-VAIoPJD-Ez-BnF_LEILYEmGENms5ctZkTcl5IN1bzW2mrgmWOiv0vw"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

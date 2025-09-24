@@ -1,0 +1,34 @@
+type UserProfile {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+input UpdateUserProfileInput {
+  firstName: String
+  lastName: String
+  profilePicture: String
+  avatar: String
+  relationStatus: String
+  dob: String
+  bio: String
+  gender: String
+  familyMembers: [String!]
+  hobbies: [String!]
+}
+
+extend type Query {
+  myUserProfile: UserProfile
+  getUserProfileByID(id: ID!): UserProfile
+}
+
+extend type Mutation {
+  updateMyUserProfile(input: UpdateUserProfileInput!): UserProfile!
+}

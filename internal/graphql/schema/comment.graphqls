@@ -1,0 +1,22 @@
+type Author {
+  id: ID!
+  username: String!
+  profilePic: String!
+  avatar: String!
+}
+
+type Comment {
+  id: ID!
+  postID: ID!
+  creatorID: ID!
+  content: String!
+  picturesAttached: [String!]
+  createdAt: String!
+  updatedAt: String!
+  author: Author!
+}
+
+extend type Query {
+    getCommentByID(id: ID!): Comment
+    getCommentsByPostID(postID: ID!): [Comment!]
+}

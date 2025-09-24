@@ -1,0 +1,25 @@
+meta {
+  name: Graphql
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:4000/query
+  body: graphql
+  auth: inherit
+}
+
+body:graphql {
+  query {
+    getCommentsByPostID(postID: "5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d") {
+      author {
+        id
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

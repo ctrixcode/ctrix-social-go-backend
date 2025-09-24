@@ -1,0 +1,14 @@
+type Post {
+  id: ID!
+  groupID: ID
+  textContent: String
+  picturesAttached: [String!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+  post(id: ID!): Post
+  myPosts: [Post!]
+  getPostsByCreatorID(creatorID: ID!): [Post!]
+}

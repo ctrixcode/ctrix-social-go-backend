@@ -1,0 +1,21 @@
+type UserSetting {
+  blockUser: [String!]!
+  hidePost: [String!]!
+  hideStory: [String!]!
+  showOnline: Boolean!
+}
+
+input UpdateUserSettingInput {
+  blockUser: [String!]
+  hidePost: [String!]
+  hideStory: [String!]
+  showOnline: Boolean
+}
+
+extend type Query {
+  myUserSetting: UserSetting!
+}
+
+extend type Mutation {
+  updateMyUserSetting(input: UpdateUserSettingInput!): UserSetting!
+}

@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "name": "Ctrix Social Backend",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.00018596649169921875,
+  "filesCount": 2,
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "{{baseURL}}/"
+  }
+}

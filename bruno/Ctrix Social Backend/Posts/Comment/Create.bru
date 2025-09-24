@@ -1,0 +1,22 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/post/comment
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "post_id": "1ffcf829-c270-4ba2-ac2f-faa262d3fb50",
+    "content": "anmol is noob 3"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
